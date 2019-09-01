@@ -14,7 +14,7 @@
           <button class="t-header-toggler t-header-mobile-toggler d-block d-lg-none" v-on:click="toggleSidebar">
             <i class="mdi mdi-menu"></i>
           </button>
-          <ul class="nav ml-auto" style="margin-left:0 !important; margin-right:auto !important;">
+          <ul class="nav ml-auto" style="margin-left:0 !important; width:100%;">
             <li class="nav-item dropdown">
               <div class="nav-link" style="padding-bottom:0;">
                 <label for="video_file" style="margin-bottom:0; line-height:1;">
@@ -34,25 +34,31 @@
                 <p>Export XML</p>
               </div>
             </li>
-            <li class="nav-item dropdown" style="padding-left:20px;">
+            <li class="nav-item dropdown" style="margin-left:auto; width:35%;" v-if="username === ''">
               <div class="nav-link">
-                <p>CustomModel </p>
-                <div class="col-md-9 showcase_content_area">
-                  <select class="custom-select">
-                    <option selected>Open this select menu</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                  </select>
-                </div>
+                <p>Username</p>
+                <!-- <div class="col-md-9 showcase_content_area"> -->
+                  <input type="text" class="form-control" id="inputType8" value="">
+                <!-- </div> -->
               </div>
             </li>
-            <li class="nav-item dropdown" style="padding-left:20px;">
+            <li class="nav-item dropdown" style="padding-left:20px; width:20%;" v-if="username === ''">
               <div class="nav-link">
-                <p>Credential</p>
-                <!-- <div class="col-md-9 showcase_content_area"> -->
-                  <input type="text" class="form-control" id="inputType8" readonly="readonly" value="0ffed3d0-bf32-4da3-83d0-8816bffe96a1">
-                <!-- </div> -->
+                <p>Password</p>
+                  <input type="password" class="form-control" id="inputType8" value="">
+              </div>
+            </li>
+            <li class="nav-item dropdown" style="padding-left:20px;" v-if="username === ''">
+              <i class="mdi mdi-arrow-right-bold-circle" style="font-size:35px;" v-on:click="login"></i>
+            </li>
+            <li class="nav-item dropdown" style="margin-left:auto; width:30%;" v-if="username !== ''">
+              <div class="nav-link">
+                <p>CustomModel </p>
+                <div class="col-md-9 showcase_content_area" style="max-width:100%">
+                  <select class="custom-select">
+                    <option v-for="customModel in customModels" value="1" v-bind:key="customModel">{{customModel}}</option>
+                  </select>
+                </div>
               </div>
             </li>
           </ul>
@@ -67,6 +73,15 @@
 
 export default {
   name: 'Header',
+  data: function() {
+    return {
+      username: "",
+      customModels: [
+        '디에디트',
+        '피지컬갤러리'
+      ]
+    }
+  },
   methods: {
     toggleSidebar: function (event) {
         if($(".page-body").attr('class') == "page-body") {
@@ -74,6 +89,9 @@ export default {
         } else {
             $(".page-body").attr('class', 'page-body');    
         }
+    },
+    login: function (event) {
+      this.username = "0ffed3d0-bf32-4da3-83d0-8816bffe96a1";
     }
   }
 };
