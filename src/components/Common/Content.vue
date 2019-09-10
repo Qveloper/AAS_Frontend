@@ -13,7 +13,7 @@
               <div class="col-lg-12">
                 <div class="grid">
                   <div class="item-wrapper">
-                    <div class="table-responsive">
+                    <div class="table-responsive" v-if="getRecognizeResult.hasOwnProperty('results')">
                       <table class="table table-hover">
                         <colgroup>
                           <col width="5%"/>
@@ -21,55 +21,16 @@
                           <col width="70%"/>
                         </colgroup>
                         <tbody>
-                          <tr>
+                          <tr v-for="(result, index) in getRecognizeResult.results" :key="index">
                             <td class="actions">
                               <i class="mdi mdi-arrow-right-drop-circle-outline" style="color:#696ffb; font-size:20px;"></i>
                             </td>
                             <td class="d-flex align-items-center">
-                              <span>00:00:00 ~ 00:00:02</span>
+                              <span>{{result.alternatives[0].timestamps[0][1]}} ~ {{result.alternatives[0].timestamps[result.alternatives[0].timestamps.length-1][2]}}</span>
                             </td>
                             <td>
                               <div class="col-md-9 showcase_content_area" style="max-width:100%;">
-                                <input type="text" class="form-control form-control-lg" id="inputType12" value="안녕하세요 여러분, 디에디트 에디터 H">
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td class="actions">
-                              <i class="mdi mdi-arrow-right-drop-circle-outline" style="color:#696ffb; font-size:20px;"></i>
-                            </td>
-                            <td class="d-flex align-items-center">
-                              <span>00:00:02 ~ 00:00:04</span>
-                            </td>
-                            <td>
-                              <div class="col-md-9 showcase_content_area" style="max-width:100%;">
-                                <input type="text" class="form-control form-control-lg" id="inputType12" value="에디터 M 입니다">
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td class="actions">
-                              <i class="mdi mdi-arrow-right-drop-circle-outline" style="color:#696ffb; font-size:20px;"></i>
-                            </td>
-                            <td class="d-flex align-items-center">
-                              <span>00:00:04 ~ 00:00:07</span>
-                            </td>
-                            <td>
-                              <div class="col-md-9 showcase_content_area" style="max-width:100%;">
-                                <input type="text" class="form-control form-control-lg" id="inputType12" value="여러분 혹시 2년전에 올라왔던 화제의 그 영상 기억 나시나요">
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td class="actions">
-                              <i class="mdi mdi-arrow-right-drop-circle-outline" style="color:#696ffb; font-size:20px;"></i>
-                            </td>
-                            <td class="d-flex align-items-center">
-                              <span>00:00:07 ~ 00:00:11</span>
-                            </td>
-                            <td>
-                              <div class="col-md-9 showcase_content_area" style="max-width:100%;">
-                                <input type="text" class="form-control form-control-lg" id="inputType12" value="디에디트 최초의 뷰티 리뷰였죠?">
+                                <input type="text" class="form-control form-control-lg" id="inputType12" v-bind:value="result.alternatives[0].transcript">
                               </div>
                             </td>
                           </tr>
@@ -96,9 +57,13 @@
 
 <script>
 /* eslint-disable */
+import {mapGetters} from 'vuex'
 
 export default {
   name: 'Content',
+  computed: {
+    ...mapGetters (['getRecognizeResult']),
+  },
 };
 </script>
 

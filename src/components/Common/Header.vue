@@ -3,8 +3,8 @@
       <nav class="t-header">
       <div class="t-header-brand-wrapper" style="justify-content:center; padding-left:0px;">
         <a href="index.html">
-          <img class="logo" src="../../assets/images/aas_logo.svg" alt="" style="width:120px;">
-          <img class="logo-mini" src="../../assets/images/aas_logo.svg" alt="" style="width:100px;">
+          <img class="logo" src="../../../static/images/aas_logo.svg" alt="" style="width:120px;">
+          <img class="logo-mini" src="../../../static/images/aas_logo.svg" alt="" style="width:100px;">
           <!-- <h1 class="logo mb-4" style="color:#000000; margin-bottom:0 !important;">AAS</h1>
           <h1 class="logo-mini mb-4" style="color:#000000; margin-bottom:0 !important;">AAS</h1> -->
         </a>
@@ -18,45 +18,45 @@
             <li class="nav-item dropdown">
               <div class="nav-link" style="padding-bottom:0;">
                 <label for="video_file" style="margin-bottom:0; line-height:1;">
-                  <i class="mdi mdi-camcorder-box" style="font-size:35px;"></i>
+                  <i class="mdi mdi-camcorder-box" id="upload_video_button" style="font-size:35px;" ref="uploadVideoButton" v-bind:class="{'button-on': getState.login}"></i>
                 </label>
-                <input type="file" id="video_file" style="display:none;">
+                <input type="file" id="video_file" style="display:none;" v-bind:disabled="!getState.login" v-on:change="uploadVideo($event)">
               </div>
               <div class="item-wrapper" style="font-size: 10px;">
                 <p>Upload Video</p>
               </div>
             </li>
             <li class="nav-item dropdown" style="padding-left:20px;">
-              <div class="nav-link" style="padding-bottom:0; margin-bottom:2px; line-height:1;">
-                <i class="mdi mdi-download" style="font-size:35px;"></i>
+              <div class="nav-link" style="padding-bottom:0; margin-bottom:2px; line-height:1;" ref="exportXmlButton">
+                <i class="mdi mdi-download" id="export_xml_button" style="font-size:35px;" v-on:click="uploadVideoButtonOn"></i>
               </div>
               <div class="item-wrapper" style="font-size: 10px;">
                 <p>Export XML</p>
               </div>
             </li>
-            <li class="nav-item dropdown" style="margin-left:auto; width:35%;" v-if="username === ''">
+            <li class="nav-item dropdown" style="margin-left:auto; width:35%;" v-if="getCredential.username === ''">
               <div class="nav-link">
                 <p>Username</p>
                 <!-- <div class="col-md-9 showcase_content_area"> -->
-                  <input type="text" class="form-control" id="inputType8" value="">
+                  <input type="text" class="form-control" ref="username" value="0ffed3d0-bf32-4da3-83d0-8816bffe96a1">
                 <!-- </div> -->
               </div>
             </li>
-            <li class="nav-item dropdown" style="padding-left:20px; width:20%;" v-if="username === ''">
+            <li class="nav-item dropdown" style="padding-left:20px; width:20%;" v-if="getCredential.username === ''">
               <div class="nav-link">
                 <p>Password</p>
-                  <input type="password" class="form-control" id="inputType8" value="">
+                  <input type="password" class="form-control" ref="password" value="IIViEXDGUJRy">
               </div>
             </li>
-            <li class="nav-item dropdown" style="padding-left:20px;" v-if="username === ''">
+            <li class="nav-item dropdown" style="padding-left:20px;" v-if="getCredential.username === ''">
               <i class="mdi mdi-arrow-right-bold-circle" style="font-size:35px;" v-on:click="login"></i>
             </li>
-            <li class="nav-item dropdown" style="margin-left:auto; width:30%;" v-if="username !== ''">
+            <li class="nav-item dropdown" style="margin-left:auto; width:30%;" v-if="getCredential.username !== ''">
               <div class="nav-link">
                 <p>CustomModel </p>
                 <div class="col-md-9 showcase_content_area" style="max-width:100%">
-                  <select class="custom-select">
-                    <option v-for="customModel in customModels" value="1" v-bind:key="customModel">{{customModel}}</option>
+                  <select class="custom-select" ref="selectModel">
+                    <option v-for="customModel in getCustomModels" v-bind:value="customModel.name" v-bind:key="customModel.customization_id">{{customModel.name}}</option>
                   </select>
                 </div>
               </div>
@@ -70,32 +70,68 @@
 
 <script>
 /* eslint-disable */
+import backendAPI from '../../api/backendAPI'
+import Constant from '../../constant'
+import {mapGetters} from 'vuex'
 
 export default {
   name: 'Header',
-  data: function() {
-    return {
-      username: "",
-      customModels: [
-        '디에디트',
-        '피지컬갤러리'
-      ]
+  computed: {
+    ...mapGetters (['getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel']),
+  },
+  watch: {
+    getCredential: () => {
+      this.uploadVideoButton();
     }
   },
   methods: {
     toggleSidebar: function (event) {
         if($(".page-body").attr('class') == "page-body") {
-            $(".page-body").attr('class', 'page-body sidebar-collpased');
+          $(".page-body").attr('class', 'page-body sidebar-collpased');
         } else {
-            $(".page-body").attr('class', 'page-body');    
+          $(".page-body").attr('class', 'page-body');
         }
     },
     login: function (event) {
-      this.username = "0ffed3d0-bf32-4da3-83d0-8816bffe96a1";
+      let params = {
+        username: this.$refs.username.value,
+        password: this.$refs.password.value
+      }
+      this.$store.dispatch(Constant.FETCH_CUSTOM_MODELS, params);
+    },
+    uploadVideo: function (event) {
+      let params = {
+        username: this.getCredential.username,
+        password: this.getCredential.password,
+        customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id
+      }
+
+      const formdata = new FormData();
+      formdata.append('videofile', event.target.files[0])
+
+      let payload = {
+        params: params,
+        formdata: formdata
+      };
+
+      this.$store.dispatch(Constant.RECOGNIZE_VIDEO, payload)
+    },
+    createCustomModel: function (params) {
+      // 개발 해야 함
+      console.log("새로 만들어야 함");
+    },
+    uploadVideoButtonOn: function (params) {
+      $("#upload_video_button").addClass('button-off')
     }
   }
 };
 </script>
 
 <style scoped>
+.button-on {
+  color: #696ffb !important;
+}
+.button-off {
+  color: #525c5d !important;
+}
 </style>
