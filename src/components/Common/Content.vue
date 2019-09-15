@@ -3,10 +3,10 @@
       <div class="page-content-wrapper">
         <div class="page-content-wrapper-inner">
           <div class="content-viewport">
-            <div class="row">
+            <div class="row" v-if="!getRecognizeResult.hasOwnProperty('results')">
               <div class="col-12 py-5">
-                <h4>자막 편집화면</h4>
-                <p class="text-gray">Welcome to AAS</p>
+                <h4 style="text-align:center;">Welcome to AAS!</h4>
+                <p class="text-gray" style="text-align:center;"><i class="mdi mdi-upload"></i> 비디오를 업로드 해 주세요.</p>
               </div>
             </div>
             <div class="row">
@@ -30,7 +30,7 @@
                             </td>
                             <td>
                               <div class="col-md-9 showcase_content_area" style="max-width:100%;">
-                                <input type="text" class="form-control form-control-lg" id="inputType12" v-bind:value="result.alternatives[0].transcript">
+                                <input type="text" v-on:focus="focusOn" v-on:focusout="focusOut" class="form-control form-control-lg" id="inputType12" v-bind:value="result.alternatives[0].transcript">
                               </div>
                             </td>
                           </tr>
@@ -64,6 +64,14 @@ export default {
   computed: {
     ...mapGetters (['getRecognizeResult']),
   },
+  methods: {
+    focusOn: function (event) {
+      event.target.parentElement.parentElement.parentElement.style.backgroundColor="#dee2e6"
+    },
+    focusOut: function (event) {
+      event.target.parentElement.parentElement.parentElement.style.backgroundColor="#ffffff"
+    },
+  }
 };
 </script>
 

@@ -18,7 +18,7 @@
             <li class="nav-item dropdown">
               <div class="nav-link" style="padding-bottom:0;">
                 <label for="video_file" style="margin-bottom:0; line-height:1;">
-                  <i class="mdi mdi-camcorder-box" id="upload_video_button" style="font-size:35px;" ref="uploadVideoButton" v-bind:class="{'button-on': getState.login}"></i>
+                  <i class="mdi mdi-camcorder-box" id="upload_video_button" style="font-size:35px;" ref="uploadVideoButton" v-bind:class="{'button-on': getState.login, 'button-off': !getState.login}"></i>
                 </label>
                 <input type="file" id="video_file" style="display:none;" v-bind:disabled="!getState.login" v-on:change="uploadVideo($event)">
               </div>
@@ -28,7 +28,7 @@
             </li>
             <li class="nav-item dropdown" style="padding-left:20px;">
               <div class="nav-link" style="padding-bottom:0; margin-bottom:2px; line-height:1;" ref="exportXmlButton">
-                <i class="mdi mdi-download" id="export_xml_button" style="font-size:35px;" v-on:click="uploadVideoButtonOn"></i>
+                <i class="mdi mdi-download" id="export_xml_button" style="font-size:35px;" v-on:click="uploadVideoButtonOn" v-bind:class="{'button-on': getState.videofile, 'button-off': !getState.videofile}"></i>
               </div>
               <div class="item-wrapper" style="font-size: 10px;">
                 <p>Export XML</p>
@@ -129,9 +129,9 @@ export default {
 
 <style scoped>
 .button-on {
-  color: #696ffb !important;
+  color: #525c5d !important;
 }
 .button-off {
-  color: #525c5d !important;
+  color: #adb5bd !important;
 }
 </style>

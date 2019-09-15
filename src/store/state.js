@@ -13,4 +13,5 @@ export default {
     videofile: false,
   },
   recognizeResult: {},
+  isLoading: false,
 };

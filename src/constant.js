@@ -8,4 +8,5 @@ export default {
   SET_STATE_VIDEOFILE: 'setStateVideofile',
   RECOGNIZE_VIDEO: 'recognizeVideo',
   SET_RECOGNIZE_RESULT: 'setRecognizeResult',
+  SET_IS_LOADING: 'setIsLoading',
 };

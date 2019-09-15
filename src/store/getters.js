@@ -17,4 +17,7 @@ export default {
   getCustomIdBySelectedModel(state) {
     return modelName => state.customModels.find(n => n.name === modelName);
   },
+  getIsLoading(state) {
+    return state.isLoading;
+  },
 };

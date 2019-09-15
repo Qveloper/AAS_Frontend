@@ -21,4 +21,7 @@ export default {
   [Constant.SET_RECOGNIZE_RESULT]: (state, payload) => {
     state.recognizeResult = payload;
   },
+  [Constant.SET_IS_LOADING]: (state, payload) => {
+    state.isLoading = payload;
+  },
 };
