@@ -27,8 +27,32 @@ export default {
     backendAPI.recognizeVideo(payload.formdata, payload.params)
       .then((response) => {
         store.commit(Constant.SET_RECOGNIZE_RESULT, response.data);
+        const subtitles = [];
+        response.data.results.forEach((element) => {
+          const obj = {};
+          obj.text = element.alternatives[0].transcript;
+          obj.start = element.alternatives[0].timestamps[0][1];
+          obj.end = element.alternatives[0].timestamps[element.alternatives[0].timestamps.length - 1][2];
+          subtitles.push(obj);
+        });
+        store.commit(Constant.SET_SUBTITLES, subtitles);
         store.commit(Constant.SET_STATE_VIDEOFILE, true);
         store.commit(Constant.SET_IS_LOADING, false);
       });
+  },
+  [Constant.EXPORT_XML]: (store, payload) => {
+    store.commit(Constant.SET_IS_LOADING, true);
+    backendAPI.exportXml(payload)
+      .then((response) => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+        const fileLink = document.createElement('a');
+
+        fileLink.href = fileURL;
+        fileLink.setAttribute('download', store.state.fileName);
+        document.body.appendChild(fileLink);
+
+        fileLink.click();
+      });
+    store.commit(Constant.SET_IS_LOADING, false);
   },
 };

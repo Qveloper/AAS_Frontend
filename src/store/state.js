@@ -12,6 +12,8 @@ export default {
     login: false,
     videofile: false,
   },
+  fileName: '',
   recognizeResult: {},
+  subtitles: [],
   isLoading: false,
 };

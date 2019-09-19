@@ -28,7 +28,7 @@
             </li>
             <li class="nav-item dropdown" style="padding-left:20px;">
               <div class="nav-link" style="padding-bottom:0; margin-bottom:2px; line-height:1;" ref="exportXmlButton">
-                <i class="mdi mdi-download" id="export_xml_button" style="font-size:35px;" v-on:click="uploadVideoButtonOn" v-bind:class="{'button-on': getState.videofile, 'button-off': !getState.videofile}"></i>
+                <i class="mdi mdi-download" id="export_xml_button" style="font-size:35px;" v-on:click="exportXml" v-bind:class="{'button-on': getState.videofile, 'button-off': !getState.videofile}"></i>
               </div>
               <div class="item-wrapper" style="font-size: 10px;">
                 <p>Export XML</p>
@@ -77,7 +77,7 @@ import {mapGetters} from 'vuex'
 export default {
   name: 'Header',
   computed: {
-    ...mapGetters (['getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel']),
+    ...mapGetters (['getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel', 'getFileName', 'getSubtitles']),
   },
   watch: {
     getCredential: () => {
@@ -107,21 +107,25 @@ export default {
       }
 
       const formdata = new FormData();
-      formdata.append('videofile', event.target.files[0])
+      const targetFile = event.target.files[0];
+      formdata.append('videofile', targetFile);
 
       let payload = {
         params: params,
         formdata: formdata
       };
 
-      this.$store.dispatch(Constant.RECOGNIZE_VIDEO, payload)
+      this.$store.dispatch(Constant.RECOGNIZE_VIDEO, payload);
+      this.$store.commit(Constant.SET_FILENAME, targetFile.name.split('.').slice(0,-1) + '.xml');
     },
     createCustomModel: function (params) {
       // 개발 해야 함
       console.log("새로 만들어야 함");
     },
-    uploadVideoButtonOn: function (params) {
-      $("#upload_video_button").addClass('button-off')
+    exportXml: function () {
+      if (this.getState.login && this.getState.videofile) {
+        this.$store.dispatch(Constant.EXPORT_XML, this.getSubtitles);
+      }
     }
   }
 };

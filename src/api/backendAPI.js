@@ -22,4 +22,14 @@ export default {
       },
     });
   },
+  exportXml(params) {
+    return axios.post(CONF.EXPORT, params, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        subtitles: params,
+      },
+    });
+  },
 };

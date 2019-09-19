@@ -21,16 +21,16 @@
                           <col width="70%"/>
                         </colgroup>
                         <tbody>
-                          <tr v-for="(result, index) in getRecognizeResult.results" :key="index">
+                          <tr v-for="(subtitle, index) in getSubtitles" :key="index">
                             <td class="actions">
                               <i class="mdi mdi-arrow-right-drop-circle-outline" style="color:#696ffb; font-size:20px;"></i>
                             </td>
                             <td class="d-flex align-items-center">
-                              <span>{{result.alternatives[0].timestamps[0][1]}} ~ {{result.alternatives[0].timestamps[result.alternatives[0].timestamps.length-1][2]}}</span>
+                              <span>{{subtitle.start}} ~ {{subtitle.end}}</span>
                             </td>
                             <td>
                               <div class="col-md-9 showcase_content_area" style="max-width:100%;">
-                                <input type="text" v-on:focus="focusOn" v-on:focusout="focusOut" class="form-control form-control-lg" id="inputType12" v-bind:value="result.alternatives[0].transcript">
+                                <input type="text" v-bind:value="subtitle.text" v-bind:index="index" @input="updateValue" v-on:focus="focusOn" v-on:focusout="focusOut" class="form-control form-control-lg" id="inputType12">
                               </div>
                             </td>
                           </tr>
@@ -58,11 +58,12 @@
 <script>
 /* eslint-disable */
 import {mapGetters} from 'vuex'
+import Constant from '../../constant'
 
 export default {
   name: 'Content',
   computed: {
-    ...mapGetters (['getRecognizeResult']),
+    ...mapGetters (['getRecognizeResult', 'getSubtitles']),
   },
   methods: {
     focusOn: function (event) {
@@ -70,6 +71,9 @@ export default {
     },
     focusOut: function (event) {
       event.target.parentElement.parentElement.parentElement.style.backgroundColor="#ffffff"
+    },
+    updateValue (e) {
+      this.$store.commit(Constant.SET_SUBTITLE, {index: parseInt(e.target.getAttribute("index")), text: e.target.value})
     },
   }
 };
