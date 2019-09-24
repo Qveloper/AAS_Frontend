@@ -22,6 +22,25 @@ export default {
         store.commit(Constant.FETCH_CREDENTIAL, { username: payload.username, password: payload.password });
       });
   },
+  [Constant.CREATE_CUSTOM_MODEL]: (store, payload) => {
+    store.commit(Constant.SET_IS_LOADING, true);
+    backendAPI.createCustom(payload, payload.params)
+      .then((response) => {
+        if (response.data.customization_id.length !== 0) {
+          store.dispatch(Constant.FETCH_CUSTOM_MODELS, { username: payload.params.username, password: payload.params.password });
+        }
+      });
+  },
+  [Constant.DELETE_CUSTOM_MODEL]: (store, payload) => {
+    store.commit(Constant.SET_IS_LOADING, true);
+    backendAPI.deleteCustom(payload)
+      .then((response) => {
+        if (response.data.length !== 0) {
+          store.dispatch(Constant.FETCH_CUSTOM_MODELS, { username: payload.username, password: payload.password });
+        }
+      });
+    store.commit(Constant.SET_IS_LOADING, false);
+  },
   [Constant.RECOGNIZE_VIDEO]: (store, payload) => {
     store.commit(Constant.SET_IS_LOADING, true);
     backendAPI.recognizeVideo(payload.formdata, payload.params)

@@ -61,6 +61,18 @@
                 </div>
               </div>
             </li>
+            <li class="nav-item dropdown" style="margin-left:0px; padding-bottom:0;" v-if="getCredential.username !== ''">
+              <div class="nav-link" style="padding-bottom:0;">
+                <br>
+                <i class="fas fa-plus-square" type=button style="font-size:20px;" v-on:click="createCustomModel"></i>
+              </div>
+            </li>
+            <li class="nav-item dropdown" style="margin-left:0px; padding-bottom:0;" v-if="getCredential.username !== ''">
+              <div class="nav-link" style="">
+                <br>
+                <i class="far fa-trash-alt" type=button aria-hidden="true" style="font-size:20px;" v-on:click="deleteCustomModel" ></i>
+              </div>
+            </li>
           </ul>
         </div>
       </div>
@@ -118,9 +130,37 @@ export default {
       this.$store.dispatch(Constant.RECOGNIZE_VIDEO, payload);
       this.$store.commit(Constant.SET_FILENAME, targetFile.name.split('.').slice(0,-1) + '.xml');
     },
-    createCustomModel: function (params) {
-      // 개발 해야 함
-      console.log("새로 만들어야 함");
+    createCustomModel: function (event) {
+      let params = {
+        username: this.getCredential.username,
+        password: this.getCredential.password,
+        name: 'test-create-model',
+        base_model_name: 'ko-KR_BroadbandModel',
+        description: 'test for create custom model'
+      }
+      const header = {
+        content_type: 'application/json',
+      }
+      let payload = {
+        params: params,
+        header: header
+      }
+      this.$store.dispatch(Constant.CREATE_CUSTOM_MODEL, payload);
+    },
+    deleteCustomModel: function (event) {
+      let params = {
+        username: this.getCredential.username,
+        password: this.getCredential.password,
+        customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id
+      }
+      this.$store.dispatch(Constant.DELETE_CUSTOM_MODEL, params);
+    },
+    getCustomModel: () => {
+      let params = {
+        username: this.$refs.username.value,
+        password: this.$refs.password.value,
+      }
+      this.$store.dispatch(Constant.FETCH_CUSTOM_MODELS, params);
     },
     exportXml: function () {
       if (this.getState.login && this.getState.videofile) {
