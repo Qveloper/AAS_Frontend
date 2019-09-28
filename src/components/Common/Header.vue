@@ -64,13 +64,13 @@
             <li class="nav-item dropdown" style="margin-left:0px; padding-bottom:0;" v-if="getCredential.username !== ''">
               <div class="nav-link" style="padding-bottom:0;">
                 <br>
-                <i class="fas fa-plus-square" type=button style="font-size:20px;" v-on:click="modalOn"></i>
+                <i class="fas fa-plus-square" type=button style="font-size:20px;" v-on:click="clickCreateBtn"></i>
               </div>
             </li>
             <li class="nav-item dropdown" style="margin-left:0px; padding-bottom:0;" v-if="getCredential.username !== ''">
               <div class="nav-link" style="">
                 <br>
-                <i class="far fa-trash-alt" type=button aria-hidden="true" style="font-size:20px;" v-on:click="deleteCustomModel" ></i>
+                <i class="far fa-trash-alt" type=button aria-hidden="true" style="font-size:20px;" v-on:click="clickDeleteBtn" ></i>
               </div>
             </li>
           </ul>
@@ -78,19 +78,18 @@
       </div>
     </nav>
 
-    <modal v-show="createModel" :myWidth="'50%'" :myHeight="'50%'">
+    <modal v-show="createModel" :myWidth="'25%'" :myHeight="'50%'">
         <div slot="header">
           <h3>Create Custom Model</h3>
         </div>
         <span slot="body">
-          <!-- <div class="input-group col-md-3"> -->
           <div class="modal-body-content">
             <p>Name</p>
             <input type="text" v-model="name" placeholder="Name">
           </div>
           <div class="modal-body-content">
             <p>Description</p>
-            <input type="text"  v-model="description" placeholder="Description">
+            <input type="text" v-model="description" placeholder="Description">
           </div>
           <div class="modal-body-content">
             <p>Base Model</p>
@@ -101,12 +100,27 @@
           </div>
         </span>
         <span slot="footer">
-          <button v-on:click="createCustomModel">
+          <button class="modal-default-button" v-on:click="createCustomModel">
             Create
           </button>
-          <button v-on:click="modalOff()">
+          <button class="modal-default-button" v-on:click="modalOff()">
             Close
           </button>
+        </span>
+      </modal>
+
+      <modal v-show="deleteModel" :myWidth="'30%'" :myHeight="'40%'">
+        <div slot="header">
+          <h3>Delete Custom Model</h3>
+        </div>
+        <span slot="body">
+          <div>
+            <p>선택한 모델을 삭제하시겠습니까?</p>
+          </div>
+        </span>
+        <span slot="footer">
+          <button class="modal-default-button" v-on:click="deleteCustomModel">Delete</button>
+          <button class="modal-default-button" v-on:click="modalOff()">Close</button>
         </span>
       </modal>
   </div>
@@ -130,6 +144,7 @@ export default {
       description: '',
       selectedBaseModel: 'ko-KR_BroadbandModel',
       createModel: false,
+      deleteModel: false,
     }
   },
   watch: {
@@ -208,6 +223,7 @@ export default {
         customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id
       }
       this.$store.dispatch(Constant.DELETE_CUSTOM_MODEL, params);
+      this.modalOff();
     },
     getCustomModel: () => {
       let params = {
@@ -226,11 +242,15 @@ export default {
         });
       }
     },
-    modalOn: function() {
+    clickCreateBtn: function() {
       this.createModel = true;
+    },
+    clickDeleteBtn: function() {
+      this.deleteModel = true;
     },
     modalOff: function() {
       this.createModel = false;
+      this.deleteModel = false;
       this.clearInputTxt();
     },
     clearInputTxt: function() {
@@ -249,7 +269,6 @@ export default {
 .button-off {
   color: #adb5bd !important;
 }
-
 .modal-header h3 {
   margin-top: 0;
   /* color: #42b983; */
@@ -260,16 +279,10 @@ export default {
 .modal-body-content {
   margin: 5px;
 }
-
 .modal-body p {
   color:rgba(0, 0, 0, 0.650);
   font-weight: bold;
 }
-
-.modal-default-button {
-  float: right;
-}
-
 .modal-footer h1 {
     font-size: 17px;
     color:#fff;
@@ -285,13 +298,6 @@ export default {
     border-color: cornflowerblue;
     border-radius: 5px;
 }
-.page {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-}
-*
 .modal-body select {
   width:min-content;
   font-size: 13px;

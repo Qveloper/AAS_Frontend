@@ -3,7 +3,8 @@
   <transition name="modal">
     <div class="modal-mask">
         <div class="modal-wrapper">
-            <div class="modal-container">
+            <!-- <div class="modal-container"> -->
+            <div class="modal-container" :style="{ width: myWidth, 'max-height': myHeight + ' !important' }">
 
                 <div class="modal-header">
                     <slot name="header">
@@ -20,8 +21,11 @@
                 <div class="modal-footer">
                     <slot name="footer">
                       <!-- <h1>default footer</h1> -->
-                      <button class="modal-default-button" @click="close()">
+                      <button class="modal-default-button" @click="select()">
                         OK
+                      </button>
+                      <button class="modal-default-button" @click="close()">
+                        Cancl
                       </button>
                     </slot>
                 </div>
@@ -41,6 +45,9 @@ export default {
   },
   props: ['myWidth', 'myHeight'],
   methods: {
+    select() {
+      this.$emit('select');
+    },
     close() {
       this.$emit('close');
     },
@@ -67,7 +74,7 @@ export default {
 }
 
 .modal-container {
-  width: 320px;
+  width: 50%;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;
@@ -91,6 +98,15 @@ export default {
 
 .modal-default-button {
   float: right;
+  color: white;
+  font-weight: bold;
+  background: #4AAE9B;
+  border: 1px solid #4AAE9B;
+  /* background-color: #6255ff;
+  border-color: #5648ff; */
+  background-color:rgb(92, 142, 235);
+  border-color: cornflowerblue;
+  border-radius: 5px;
 }
 
 /*
@@ -119,10 +135,5 @@ export default {
     font-size: 20px;
     color:#fff;
 }
-.modal-footer button {
-    color: white;
-    background: #4AAE9B;
-    border: 1px solid #4AAE9B;
-    border-radius: 2px;
-  }
+
 </style>
