@@ -61,7 +61,10 @@ export default {
   },
   [Constant.EXPORT_XML]: (store, payload) => {
     store.commit(Constant.SET_IS_LOADING, true);
-    backendAPI.exportXml(payload)
+    const params = payload;
+    params.fileName = store.state.fileName;
+
+    backendAPI.exportXml(params)
       .then((response) => {
         const fileURL = window.URL.createObjectURL(new Blob([response.data]));
         const fileLink = document.createElement('a');

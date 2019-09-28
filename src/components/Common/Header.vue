@@ -218,7 +218,12 @@ export default {
     },
     exportXml: function () {
       if (this.getState.login && this.getState.videofile) {
-        this.$store.dispatch(Constant.EXPORT_XML, this.getSubtitles);
+        this.$store.dispatch(Constant.EXPORT_XML, { 
+          username: this.getCredential.username,
+          password: this.getCredential.password,
+          subtitles: this.getSubtitles,
+          customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id
+        });
       }
     },
     modalOn: function() {
