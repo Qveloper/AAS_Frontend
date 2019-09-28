@@ -64,7 +64,7 @@
             <li class="nav-item dropdown" style="margin-left:0px; padding-bottom:0;" v-if="getCredential.username !== ''">
               <div class="nav-link" style="padding-bottom:0;">
                 <br>
-                <i class="fas fa-plus-square" type=button style="font-size:20px;" v-on:click="createCustomModel"></i>
+                <i class="fas fa-plus-square" type=button style="font-size:20px;" v-on:click="modalOn"></i>
               </div>
             </li>
             <li class="nav-item dropdown" style="margin-left:0px; padding-bottom:0;" v-if="getCredential.username !== ''">
@@ -77,6 +77,38 @@
         </div>
       </div>
     </nav>
+
+    <modal v-show="createModel" :myWidth="'50%'" :myHeight="'50%'">
+        <div slot="header">
+          <h3>Create Custom Model</h3>
+        </div>
+        <span slot="body">
+          <!-- <div class="input-group col-md-3"> -->
+          <div class="modal-body-content">
+            <p>Name</p>
+            <input type="text" v-model="name" placeholder="Name">
+          </div>
+          <div class="modal-body-content">
+            <p>Description</p>
+            <input type="text"  v-model="description" placeholder="Description">
+          </div>
+          <div class="modal-body-content">
+            <p>Base Model</p>
+            <select name="basemodel" class="custom-select" v-model="selectedBaseModel">
+              <option value="ko-KR_BroadbandModel">ko-KR_BroadbandModel</option>
+              <option value="ko-KR_NarrowbandModel">ko-KR_NarrowbandModel</option>
+            </select>
+          </div>
+        </span>
+        <span slot="footer">
+          <button v-on:click="createCustomModel">
+            Create
+          </button>
+          <button v-on:click="modalOff()">
+            Close
+          </button>
+        </span>
+      </modal>
   </div>
 </template>
 
@@ -84,6 +116,7 @@
 /* eslint-disable */
 import backendAPI from '../../api/backendAPI'
 import Constant from '../../constant'
+import Modal from './Modal'
 import {mapGetters} from 'vuex'
 
 export default {
@@ -91,10 +124,30 @@ export default {
   computed: {
     ...mapGetters (['getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel', 'getFileName', 'getSubtitles']),
   },
+  data() {
+    return {
+      name: '',
+      description: '',
+      selectedBaseModel: 'ko-KR_BroadbandModel',
+      createModel: false,
+    }
+  },
   watch: {
     getCredential: () => {
       this.uploadVideoButton();
+    },
+    name(newVal) {
+      this.name = newVal;
+    },
+    description(newVal) {
+      this.description = newVal;
+    },
+    selectedBaseModel(newVal) {
+      this.selectedBaseModel = newVal;
     }
+  },
+  components: {
+    Modal,
   },
   methods: {
     toggleSidebar: function (event) {
@@ -134,9 +187,9 @@ export default {
       let params = {
         username: this.getCredential.username,
         password: this.getCredential.password,
-        name: 'test-create-model',
-        base_model_name: 'ko-KR_BroadbandModel',
-        description: 'test for create custom model'
+        name: this.name,
+        base_model_name: this.selectedBaseModel,
+        description: this.description,
       }
       const header = {
         content_type: 'application/json',
@@ -146,6 +199,7 @@ export default {
         header: header
       }
       this.$store.dispatch(Constant.CREATE_CUSTOM_MODEL, payload);
+      this.modalOff();
     },
     deleteCustomModel: function (event) {
       let params = {
@@ -166,6 +220,18 @@ export default {
       if (this.getState.login && this.getState.videofile) {
         this.$store.dispatch(Constant.EXPORT_XML, this.getSubtitles);
       }
+    },
+    modalOn: function() {
+      this.createModel = true;
+    },
+    modalOff: function() {
+      this.createModel = false;
+      this.clearInputTxt();
+    },
+    clearInputTxt: function() {
+      this.name = '';
+      this.description = '';
+      this.selectedBaseModel = 'ko-KR_BroadbandModel'
     }
   }
 };
@@ -177,5 +243,59 @@ export default {
 }
 .button-off {
   color: #adb5bd !important;
+}
+
+.modal-header h3 {
+  margin-top: 0;
+  /* color: #42b983; */
+  color:royalblue;
+  font-size: 20px;
+  font-weight: bold;
+}
+.modal-body-content {
+  margin: 5px;
+}
+
+.modal-body p {
+  color:rgba(0, 0, 0, 0.650);
+  font-weight: bold;
+}
+
+.modal-default-button {
+  float: right;
+}
+
+.modal-footer h1 {
+    font-size: 17px;
+    color:#fff;
+}
+.modal-footer button {
+    color: white;
+    font-weight: bold;
+    background: #4AAE9B;
+    border: 1px solid #4AAE9B;
+    /* background-color: #6255ff;
+    border-color: #5648ff; */
+    background-color:rgb(92, 142, 235);
+    border-color: cornflowerblue;
+    border-radius: 5px;
+}
+.page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+*
+.modal-body select {
+  width:min-content;
+  font-size: 13px;
+  /* padding: .8em .5em;
+  font-family: inherit;
+  border: 1px solid #999;
+  border-radius: 0px; 
+  -webkit-appearance: none; 
+  -moz-appearance: none;  
+  appearance: none;ß */
 }
 </style>
