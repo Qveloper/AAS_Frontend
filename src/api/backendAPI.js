@@ -47,9 +47,6 @@ export default {
       headers: {
         'Content-Type': 'application/json',
       },
-      data: {
-        subtitles: params,
-      },
     });
   },
 };
