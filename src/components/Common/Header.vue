@@ -100,7 +100,7 @@
           </div>
         </span>
         <span slot="footer">
-          <button class="modal-default-button" v-on:click="createCustomModel">
+          <button class="modal-default-button" v-if="name !== ''" v-on:click="createCustomModel">
             Create
           </button>
           <button class="modal-default-button" v-on:click="modalOff()">
