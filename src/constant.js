@@ -12,7 +12,9 @@ export default {
   RECOGNIZE_VIDEO: 'recognizeVideo',
   SET_FILENAME: 'setFileName',
   SET_RECOGNIZE_RESULT: 'setRecognizeResult',
+  SPLICE_RECOGNIZE_RESULT: 'spliceRecognizeResult',
   SET_SUBTITLES: 'setSubtitles',
   SET_SUBTITLE: 'setSubtitle',
+  SPLICE_SUBTITLE: 'spliceSubtitle',
   EXPORT_XML: 'exportXml',
 };
