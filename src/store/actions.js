@@ -24,10 +24,10 @@ export default {
   },
   [Constant.CREATE_CUSTOM_MODEL]: (store, payload) => {
     store.commit(Constant.SET_IS_LOADING, true);
-    backendAPI.createCustom(payload, payload.params)
+    backendAPI.createCustom(payload)
       .then((response) => {
         if (response.data.customization_id.length !== 0) {
-          store.dispatch(Constant.FETCH_CUSTOM_MODELS, { username: payload.params.username, password: payload.params.password });
+          store.dispatch(Constant.FETCH_CUSTOM_MODELS, { username: payload.username, password: payload.password });
         }
       });
   },
