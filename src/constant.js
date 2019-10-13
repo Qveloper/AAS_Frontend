@@ -13,6 +13,7 @@ export default {
   SET_FILENAME: 'setFileName',
   SPLICE_RECOGNIZE_RESULT: 'spliceRecognizeResult',
   SET_RECOGNIZE_RESULT: 'setRecognizeResult',
+  SPLICE_RECOGNIZE_RESULT: 'spliceRecognizeResult',
   SET_SUBTITLES: 'setSubtitles',
   SET_SUBTITLE: 'setSubtitle',
   SPLICE_SUBTITLE: 'spliceSubtitle',
