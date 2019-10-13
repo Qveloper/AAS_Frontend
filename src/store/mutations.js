@@ -27,10 +27,17 @@ export default {
   [Constant.SET_RECOGNIZE_RESULT]: (state, payload) => {
     state.recognizeResult = payload;
   },
+  [Constant.SPLICE_RECOGNIZE_RESULT]: (state, index) => {
+    state.recognizeResult.splice(index, 1);
+  },
   [Constant.SET_SUBTITLES]: (state, payload) => {
     state.subtitles = payload;
   },
   [Constant.SET_SUBTITLE]: (state, payload) => {
     state.subtitles[payload.index].text = payload.text;
+    state.subtitles[payload.index].initData = payload.initData;
+  },
+  [Constant.SPLICE_SUBTITLE]: (state, index) => {
+    state.subtitles.splice(index, 1);
   },
 };
