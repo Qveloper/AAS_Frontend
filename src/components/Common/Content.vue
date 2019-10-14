@@ -17,7 +17,8 @@
                       <table class="table table-hover">
                         <colgroup>
                           <col width="5%"/>
-                          <col width="25%"/>
+                          <col width="20%"/>
+                          <col width="5%"/>
                           <col width="70%"/>
                         </colgroup>
                         <tbody>
@@ -28,9 +29,12 @@
                             <td class="d-flex align-items-center">
                               <span>{{subtitle.start}} ~ {{subtitle.end}}</span>
                             </td>
-                            <td>
+                            <td class="actions">
+                              <i v-if="!subtitle.initData" class="mdi mdi-undo-variant" v-bind:index="index" @click="resetSubtitle" style="color:#696ffb; font-size:20px;"></i>
+                            </td>
+                            <td style="padding-left:0px;">
                               <div class="col-md-9 showcase_content_area" style="max-width:100%;">
-                                <input type="text" @keyup.ctrl.219="chunkUp" @keyup.ctrl.221="chunkDown" v-bind:value="subtitle.text" v-bind:index="index" @input="updateValue" v-on:focus="focusOn" v-on:focusout="focusOut" class="form-control form-control-lg" id="inputType12" style="font-style:italic; font-weight:bold;">
+                                <input type="text" @keyup.ctrl.219="chunkUp" @keyup.ctrl.221="chunkDown" v-bind:value="subtitle.text" v-bind:index="index" @input="updateValue" v-on:focus="focusOn" v-on:focusout="focusOut" class="form-control form-control-lg" id="inputType12" :style="[ subtitle.initData ? { 'font-style':'italic', 'font-weight':'bold' } : { 'font-style':'normal', 'font-weight':'normal' }]">
                               </div>
                             </td>
                           </tr>
@@ -82,8 +86,6 @@ export default {
       let currentIndex = parseInt(e.currentTarget.getAttribute('index'))
       let currentInitData = this.getSubtitles[currentIndex].initData
       if (currentInitData) {
-        e.currentTarget.style.fontWeight='normal'
-        e.currentTarget.style.fontStyle='normal'
         currentInitData = false
       }
       this.$store.commit(Constant.SET_SUBTITLE, {index: currentIndex, text: e.target.value, initData: currentInitData})
@@ -122,6 +124,15 @@ export default {
         }
         this.getRecognizeResult[currentIndex-1].push(targetValue)
       }
+    },
+    resetSubtitle: function (e) {
+      let currentIndex = parseInt(e.currentTarget.getAttribute('index'))
+      let text = ''
+      this.getRecognizeResult[currentIndex].forEach((element) => {
+          text += element[0];
+          text += ' ';
+      });
+      this.$store.commit(Constant.SET_SUBTITLE, {index: currentIndex, text: text, initData: true})
     },
   }
 };
