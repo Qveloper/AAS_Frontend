@@ -35,6 +35,7 @@ export default {
   getSubtitles(state) {
     return state.subtitles.map((obj, index) => {
       const newObj = obj;
+      // 초기데이터일 경우, chunk들을 합쳐 text 값 생성
       if (newObj.initData) {
         const tmpElement = state.recognizeResult[index];
         newObj.text = '';
@@ -46,6 +47,7 @@ export default {
         newObj.end = tmpElement[tmpElement.length - 1][2];
         return newObj;
       }
+      // 아닐 경우 값을 그대로 return
       return obj;
     });
   },
