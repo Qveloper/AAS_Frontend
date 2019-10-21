@@ -8,8 +8,20 @@ export default {
   getCredential(state) {
     return state.credential;
   },
+  getProgressBar(state) {
+    return state.progressbar;
+  },
   getCustomModels(state) {
     return state.customModels;
+  },
+  getSelectedModelStatus(state) {
+    return state.selctedModelStatus;
+  },
+  getSelctedCorpus(state) {
+    return state.selectedCorpus;
+  },
+  getStatusBySelectedCorpus(state) {
+    return state.selectedCorpus.state;
   },
   getState(state) {
     return state.state;

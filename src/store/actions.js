@@ -87,7 +87,50 @@ export default {
         document.body.appendChild(fileLink);
 
         fileLink.click();
+
+        backendAPI.addCorpus(params)
+          .then((res) => {
+            if (res.data.length !== 0) {
+              // store.dispatch(Constant.fetchCorpus, params);
+            }
+            store.commit(Constant.SET_CORPUS_NAME, res.data);
+            // store.commit(Constant.SET_IS_LOADING, false);
+            const fetchCorpusParams = {
+              username: params.username,
+              password: params.password,
+              customization_id: params.customization_id,
+              corpus_name: res.data.corpus_name,
+            };
+            store.commit(Constant.SET_IS_LOADING, false);
+            store.commit(Constant.SET_PROGRESS_STATUS, true);
+            store.dispatch(Constant.FETCH_CORPUS, fetchCorpusParams);
+          });
       });
-    store.commit(Constant.SET_IS_LOADING, false);
+  },
+  [Constant.TRAIN_MODEL]: (store, payload) => {
+    backendAPI.trainCustomModel(payload)
+      .then(() => {
+        store.commit(Constant.SET_PROGRESS_STATUS, false);
+      });
+  },
+  [Constant.FETCH_CORPUS]: (store, payload) => {
+    // console.log('kyubeom1', payload);
+    backendAPI.fetchCorpus(payload)
+      .then((response) => {
+        store.commit(Constant.SET_CORPUS_NAME, response.data);
+        setTimeout(() => {
+          if (store.state.selectedCorpus.status.match('analyzed')) {
+            const trainModalParams = {
+              username: payload.username,
+              password: payload.password,
+              customization_id: payload.customization_id,
+            };
+            store.dispatch(Constant.TRAIN_MODEL, trainModalParams);
+            // store.commit(Constant.SET_IS_LOADING, false);
+          } else {
+            store.dispatch(Constant.FETCH_CORPUS, payload);
+          }
+        }, 3000);
+      });
   },
 };
