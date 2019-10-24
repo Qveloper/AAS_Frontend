@@ -6,6 +6,7 @@
 
 <script>
 /* eslint-disable */
+import Constant from '../../constant';
 import videojs from 'video.js';
 
 export default {
@@ -27,6 +28,7 @@ export default {
     this.player = videojs(this.$refs.videoPlayer, this.options, function onPlayerReady() {
       console.log('onPlayerReady', this);
     })
+    this.$store.commit(Constant.SET_VIDEO_PLAYER, this.player);
   },
   beforeDestroy() {
     if (this.player) {

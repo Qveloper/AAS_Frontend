@@ -51,10 +51,17 @@ export default {
         fluid: true,
 				sources: [
 					{
-						src: "https://upload.wikimedia.org/wikipedia/en/d/dc/Pac-Man_Atari_2600_footage.ogv",
-						type: "video/ogg"
+						src: "/static/video_player/video/test.mp4",
+						type: "video/mp4"
 					}
-				]
+        ],
+        tracks: [
+          {
+            src: '/static/video_player/vtt/test.vtt',
+            default: true,
+            label: 'test'
+          }
+        ],
 			}
 		};
 	}

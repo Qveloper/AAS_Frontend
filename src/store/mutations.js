@@ -15,6 +15,9 @@ export default {
   [Constant.FETCH_CUSTOM_MODELS]: (state, payload) => {
     state.customModels = payload;
   },
+  [Constant.SET_VIDEO_PLAYER]: (state, payload) => {
+    state.videoPlayer = payload;
+  },
   [Constant.SET_STATE_LOGIN]: (state, payload) => {
     state.state.login = payload;
   },

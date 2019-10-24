@@ -16,4 +16,5 @@ export default {
   recognizeResult: {},
   subtitles: [],
   isLoading: false,
+  videoPlayer: {},
 };

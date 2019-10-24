@@ -24,7 +24,7 @@
                         <tbody>
                           <tr v-for="(subtitle, index) in getSubtitles" :key="index">
                             <td class="actions">
-                              <i class="mdi mdi-arrow-right-drop-circle-outline" style="color:#696ffb; font-size:20px;"></i>
+                              <i class="mdi mdi-arrow-right-drop-circle-outline" @click="playCurrentTime" v-bind:index="index" style="color:#696ffb; font-size:20px;"></i>
                             </td>
                             <td class="d-flex align-items-center">
                               <span>{{subtitle.start}} ~ {{subtitle.end}}</span>
@@ -34,7 +34,7 @@
                             </td>
                             <td style="padding-left:0px;">
                               <div class="col-md-9 showcase_content_area" style="max-width:100%;">
-                                <input type="text" @keyup.ctrl.219="chunkUp" @keyup.ctrl.221="chunkDown" v-bind:value="subtitle.text" v-bind:index="index" @input="updateValue" v-on:focus="focusOn" v-on:focusout="focusOut" class="form-control form-control-lg" id="inputType12" :style="[ subtitle.initData ? { 'font-style':'italic', 'font-weight':'bold' } : { 'font-style':'normal', 'font-weight':'normal' }]">
+                                <input type="text" @keyup.ctrl.219="chunkUp" @keyup.ctrl.221="chunkDown" @keyup.enter.exact="playCurrentTime" v-bind:value="subtitle.text" v-bind:index="index" @input="updateValue" v-on:focus="focusOn" v-on:focusout="focusOut" class="form-control form-control-lg" id="inputType12" :style="[ subtitle.initData ? { 'font-style':'italic', 'font-weight':'bold' } : { 'font-style':'normal', 'font-weight':'normal' }]">
                               </div>
                             </td>
                           </tr>
@@ -73,11 +73,15 @@ export default {
     };
   },
   computed: {
-    ...mapGetters (['getRecognizeResult', 'getSubtitles']),
+    ...mapGetters (['getRecognizeResult', 'getSubtitles', 'getVideoPlayer']),
   },
   methods: {
-    focusOn: function (event) {
-      event.target.parentElement.parentElement.parentElement.style.backgroundColor="#dee2e6"
+    focusOn: function (e) {
+      e.target.parentElement.parentElement.parentElement.style.backgroundColor="#dee2e6"
+      // Video Player 시점 조정
+      let currentIndex = parseInt(e.currentTarget.getAttribute('index'))
+      this.getVideoPlayer.currentTime(this.getSubtitles[currentIndex].start)
+      this.getVideoPlayer.pause()
     },
     focusOut: function (event) {
       event.target.parentElement.parentElement.parentElement.style.backgroundColor="#ffffff"
@@ -133,6 +137,13 @@ export default {
           text += ' ';
       });
       this.$store.commit(Constant.SET_SUBTITLE, {index: currentIndex, text: text, initData: true})
+    },
+    playCurrentTime: function (e) {
+      if (this.getVideoPlayer.paused()){
+        this.getVideoPlayer.play()
+      } else {
+        this.getVideoPlayer.pause()
+      }
     },
   }
 };

@@ -11,6 +11,9 @@ export default {
   getCustomModels(state) {
     return state.customModels;
   },
+  getVideoPlayer(state) {
+    return state.videoPlayer;
+  },
   getState(state) {
     return state.state;
   },

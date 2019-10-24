@@ -7,6 +7,7 @@ export default {
   FETCH_CUSTOM_MODELS: 'fetchCustomModels',
   CREATE_CUSTOM_MODEL: 'createCustomModel',
   DELETE_CUSTOM_MODEL: 'deleteCustomModel',
+  SET_VIDEO_PLAYER: 'setVideoPlayer',
   SET_STATE_LOGIN: 'setStateLogin',
   SET_STATE_VIDEOFILE: 'setStateVideofile',
   RECOGNIZE_VIDEO: 'recognizeVideo',
