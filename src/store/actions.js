@@ -41,6 +41,25 @@ export default {
       });
     store.commit(Constant.SET_IS_LOADING, false);
   },
+  [Constant.FETCH_CUSTOM_MODEL]: (store, payload) => {
+    backendAPI.fetchCustom(payload)
+      .then((response) => {
+        store.commit(Constant.FETCH_CUSTOM_MODEL, response.data);
+        const fetchCustomModelParams = {
+          username: payload.username,
+          password: payload.password,
+          customization_id: payload.customization_id,
+        };
+        setTimeout(() => {
+          if (store.state.selectedModel.status.match('available')) {
+            store.commit(Constant.SET_PROGRESS_STATUS, false);
+            // clear 작성 필요
+          } else {
+            store.dispatch(Constant.FETCH_CUSTOM_MODEL, fetchCustomModelParams);
+          }
+        }, 3000);
+      });
+  },
   [Constant.RECOGNIZE_VIDEO]: (store, payload) => {
     store.commit(Constant.SET_IS_LOADING, true);
     backendAPI.recognizeVideo(payload.formdata, payload.params)
@@ -108,9 +127,16 @@ export default {
       });
   },
   [Constant.TRAIN_MODEL]: (store, payload) => {
+    store.commit(Constant.SET_PROGRESS_STATUS, true);
     backendAPI.trainCustomModel(payload)
       .then(() => {
-        store.commit(Constant.SET_PROGRESS_STATUS, false);
+        const fetchCustomModelParams = {
+          username: payload.username,
+          password: payload.password,
+          customization_id: payload.customization_id,
+        };
+        store.dispatch(Constant.FETCH_CUSTOM_MODEL, fetchCustomModelParams);
+        // store.commit(Constant.SET_PROGRESS_STATUS, false);
       });
   },
   [Constant.FETCH_CORPUS]: (store, payload) => {
@@ -118,13 +144,13 @@ export default {
     backendAPI.fetchCorpus(payload)
       .then((response) => {
         store.commit(Constant.SET_CORPUS_NAME, response.data);
+        const trainModalParams = {
+          username: payload.username,
+          password: payload.password,
+          customization_id: payload.customization_id,
+        };
         setTimeout(() => {
           if (store.state.selectedCorpus.status.match('analyzed')) {
-            const trainModalParams = {
-              username: payload.username,
-              password: payload.password,
-              customization_id: payload.customization_id,
-            };
             store.dispatch(Constant.TRAIN_MODEL, trainModalParams);
             // store.commit(Constant.SET_IS_LOADING, false);
           } else {

@@ -34,6 +34,17 @@ export default {
       },
     });
   },
+  fetchCustom(params) {
+    return axios.get(CONF.FETCH_CUSTOM, {
+      params: {
+        customization_id: params.customization_id,
+      },
+      auth: {
+        username: params.username,
+        password: params.password,
+      },
+    });
+  },
   recognizeVideo(formData, params) {
     return axios.post(CONF.RECOGNIZE, formData, {
       auth: {

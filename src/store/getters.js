@@ -14,8 +14,8 @@ export default {
   getCustomModels(state) {
     return state.customModels;
   },
-  getSelectedModelStatus(state) {
-    return state.selctedModelStatus;
+  getSelectedModel(state) {
+    return state.selctedModel;
   },
   getSelctedCorpus(state) {
     return state.selectedCorpus;
