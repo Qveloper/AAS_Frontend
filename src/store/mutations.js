@@ -21,8 +21,8 @@ export default {
   [Constant.SET_VIDEO_PLAYER]: (state, payload) => {
     state.videoPlayer = payload;
   },
-  [Constant.SET_MODEL_STATUS]: (state, payload) => {
-    state.seledtedModelStatus = payload;
+  [Constant.FETCH_CUSTOM_MODEL]: (state, payload) => {
+    state.selectedModel = payload;
   },
   [Constant.SET_CORPUS_NAME]: (state, payload) => {
     state.selectedCorpus = payload;

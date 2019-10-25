@@ -17,8 +17,8 @@ export default {
   getVideoPlayer(state) {
     return state.videoPlayer;
   },
-  getSelectedModelStatus(state) {
-    return state.selctedModelStatus;
+  getSelectedModel(state) {
+    return state.selctedModel;
   },
   getSelctedCorpus(state) {
     return state.selectedCorpus;

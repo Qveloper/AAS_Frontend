@@ -8,7 +8,7 @@ export default {
     password: '',
   },
   customModels: [],
-  selectedModelStatus: '',
+  selectedModel: {},
   selectedCorpus: {},
   state: {
     login: false,
