@@ -66,4 +66,47 @@ export default {
       },
     });
   },
+  addCorpus(params) {
+    return axios.post(CONF.ADD_CORPUS, {
+      data: {
+        subtitles: params.subtitles,
+        corpus_name: params.corpus_name,
+        customization_id: params.customization_id,
+        fileName: params.fileName,
+      },
+    },
+    {
+      auth: {
+        username: params.username,
+        password: params.password,
+      },
+    });
+  },
+  fetchCorpus(params) {
+    // path 나 query로 바꾸거 GET
+    // console.log('kyubeom', params);
+    return axios.get(CONF.FETCH_CORPUS, {
+      params: {
+        customization_id: params.customization_id,
+        corpus_name: params.corpus_name,
+      },
+      auth: {
+        username: params.username,
+        password: params.password,
+      },
+    });
+  },
+  trainCustomModel(params) {
+    return axios.post(CONF.TRAIN, {
+      data: {
+        customization_id: params.customization_id,
+      },
+    },
+    {
+      auth: {
+        username: params.username,
+        password: params.password,
+      },
+    });
+  },
 };

@@ -15,6 +15,7 @@
                 <div class="modal-body">
                     <slot name="body">
                       <!-- Modal Body -->
+                      <!-- {{  }} -->
                     </slot>
                 </div>
 
@@ -41,7 +42,7 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'Modal',
   computed: {
-    ...mapGetters(['getIsLoading']),
+    ...mapGetters(['getIsLoading', 'getErrorMessage']),
   },
   props: ['myWidth', 'myHeight'],
   methods: {

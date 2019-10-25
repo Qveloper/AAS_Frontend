@@ -8,6 +8,8 @@ export default {
     password: '',
   },
   customModels: [],
+  selectedModelStatus: '',
+  selectedCorpus: {},
   state: {
     login: false,
     videofile: false,
@@ -17,4 +19,5 @@ export default {
   subtitles: [],
   isLoading: false,
   videoPlayer: {},
+  progressbar: false,
 };

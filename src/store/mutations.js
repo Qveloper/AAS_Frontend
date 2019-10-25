@@ -12,11 +12,20 @@ export default {
     state.credential.username = payload.username;
     state.credential.password = payload.password;
   },
+  [Constant.SET_PROGRESS_STATUS]: (state, payload) => {
+    state.progressbar = payload;
+  },
   [Constant.FETCH_CUSTOM_MODELS]: (state, payload) => {
     state.customModels = payload;
   },
   [Constant.SET_VIDEO_PLAYER]: (state, payload) => {
     state.videoPlayer = payload;
+  },
+  [Constant.SET_MODEL_STATUS]: (state, payload) => {
+    state.seledtedModelStatus = payload;
+  },
+  [Constant.SET_CORPUS_NAME]: (state, payload) => {
+    state.selectedCorpus = payload;
   },
   [Constant.SET_STATE_LOGIN]: (state, payload) => {
     state.state.login = payload;
