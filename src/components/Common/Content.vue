@@ -80,10 +80,16 @@ export default {
       e.target.parentElement.parentElement.parentElement.style.backgroundColor="#dee2e6"
       // Video Player 시점 조정
       let currentIndex = parseInt(e.currentTarget.getAttribute('index'))
-      this.getVideoPlayer.currentTime(this.getSubtitles[currentIndex].start)
-      this.getVideoPlayer.pause()
+      this.getVideoPlayer.videoPlayerObject.pause()
+      this.getVideoPlayer.videoPlayerObject.currentTime(this.getSubtitles[currentIndex].start)
+      this.$store.commit(Constant.SET_VIDEO_PLAYER_CURRENT_TIME, {
+        start: this.getSubtitles[currentIndex].start,
+        end: this.getSubtitles[currentIndex].end
+      })
+      this.$store.commit(Constant.SET_VIDEO_PLAYER_LOOP, true)
     },
     focusOut: function (event) {
+      this.$store.commit(Constant.SET_VIDEO_PLAYER_LOOP, false)
       event.target.parentElement.parentElement.parentElement.style.backgroundColor="#ffffff"
     },
     updateValue (e) {
@@ -139,10 +145,10 @@ export default {
       this.$store.commit(Constant.SET_SUBTITLE, {index: currentIndex, text: text, initData: true})
     },
     playCurrentTime: function (e) {
-      if (this.getVideoPlayer.paused()){
-        this.getVideoPlayer.play()
+      if (this.getVideoPlayer.videoPlayerObject.paused()){
+        this.getVideoPlayer.videoPlayerObject.play()
       } else {
-        this.getVideoPlayer.pause()
+        this.getVideoPlayer.videoPlayerObject.pause()
       }
     },
   }

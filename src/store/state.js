@@ -18,6 +18,13 @@ export default {
   recognizeResult: {},
   subtitles: [],
   isLoading: false,
-  videoPlayer: {},
+  videoPlayer: {
+    videoPlayerObject: {},
+    loop: false,
+    currentTime: {
+      start: 0,
+      end: 0,
+    },
+  },
   progressbar: false,
 };
