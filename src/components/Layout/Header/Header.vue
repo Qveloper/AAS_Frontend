@@ -1,4 +1,3 @@
-
 <template>
     <!-- begin:: Header -->
     <div id="kt_header" class="kt-header kt-grid__item  kt-header--fixed " data-ktheader-minimize="on" style="background-image: url(static/images/header-bg-demo3.jpg);">
