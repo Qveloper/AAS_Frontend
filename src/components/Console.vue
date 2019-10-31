@@ -1,30 +1,38 @@
 <template>
   <div>
-    <!-- partial:partials/_header.html -->
-    <Header/>
-    <!-- partial -->
-    <div class="page-body">
-      <div v-if="getProgressBar" class="modal-mask"></div>
-      <!-- partial:partials/_sidebar.html -->
-      <Sidebar/>
-      <!-- partial -->
-      <Content/>
-      <!-- page content ends -->
+<!-- begin:: Page -->
+<!--[html-partial:include:{"file":"partials/_header/base-mobile.html"}]/-->
+<BaseMobile/>
+<div class="kt-grid kt-grid--hor kt-grid--root">
+  <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver kt-page">
+    <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
+      <!--[html-partial:include:{"file":"partials/_header/base.html"}]/-->
+      <Header/>
+      <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-grid--stretch">
+        <div class="kt-body kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-grid--stretch" id="kt_body">
+          <div class="kt-content kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+            <Subheader/>
+            <!--[html-partial:include:{"file":"partials/_content/base.html"}]/-->
+            <Content/>
+            <router-view/>
+          </div>
+        </div>
+      </div>
+      <!--[html-partial:include:{"file":"partials/_footer/base.html"}]/-->
+      <Footer/>
     </div>
-    <!--page body ends -->
-    <!-- endbuild -->
-    <loading :active.sync="getIsLoading"
-        :can-cancel="false"
-        :loader="'dots'"
-        :color="'#696ffb'"></loading>
+  </div>
+</div>
   </div>
 </template>
 
 <script>
 /* eslint-disable */
-import Header from './Common/Header';
-import Sidebar from './Common/Sidebar';
-import Content from './Common/Content';
+import Header from './Layout/Header/Header'
+import Subheader from './Layout/Subheader/Subheader';
+import Footer from './Layout/Footer/Footer'
+import Content from './Layout/Content/Content'
+import BaseMobile from './Layout/Header/_base-mobile';
 
 // vue-loading-overlay
 import Loading from 'vue-loading-overlay';
@@ -35,10 +43,11 @@ import {mapGetters} from 'vuex'
 export default {
   name: 'Console',
   components: {
-    Header, 
-    Sidebar, 
+    BaseMobile,
+    Header,
+    Subheader,
     Content,
-    Loading
+    Footer
   },
   computed: {
     ...mapGetters (['getIsLoading', 'getProgressBar']),
