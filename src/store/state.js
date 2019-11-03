@@ -13,6 +13,7 @@ export default {
   state: {
     login: false,
     videofile: false,
+    selectedModelStatus: 'training',
   },
   fileName: '',
   recognizeResult: {},

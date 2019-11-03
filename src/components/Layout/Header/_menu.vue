@@ -5,27 +5,245 @@
     <button class="kt-header-menu-wrapper-close" id="kt_header_menu_mobile_close_btn"><i class="la la-close"></i></button>
     <div class="kt-header-menu-wrapper" id="kt_header_menu_wrapper" style="opacity: 1;">
       <div id="kt_header_menu" class="kt-header-menu kt-header-menu-mobile ">
-        <ul class="kt-menu__nav ">
-          <li class="kt-menu__item  kt-menu__item--open kt-menu__item--here kt-menu__item--submenu kt-menu__item--rel kt-menu__item--open kt-menu__item--here" data-ktmenu-submenu-toggle="click" aria-haspopup="true"><a href="javascript:;" class="kt-menu__link kt-menu__toggle"><span class="kt-menu__link-text">Dashboard</span><i class="kt-menu__hor-arrow la la-angle-down"></i><i class="kt-menu__ver-arrow la la-angle-right"></i></a>
-            <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">
-              <ul class="kt-menu__subnav">
-                <li class="kt-menu__item  kt-menu__item--active " aria-haspopup="true"><a href="index.html" class="kt-menu__link "><i class="kt-menu__link-bullet kt-menu__link-bullet--line"><span></span></i><span class="kt-menu__link-text">Default Dashboard</span></a></li>
-                <li class="kt-menu__item " aria-haspopup="true"><a href="dashboards/aside.html" class="kt-menu__link "><i class="kt-menu__link-bullet kt-menu__link-bullet--line"><span></span></i><span class="kt-menu__link-text">Aside Dashboard</span></a></li>
-                <li class="kt-menu__item " aria-haspopup="true"><a href="dashboards/fluid.html" class="kt-menu__link "><i class="kt-menu__link-bullet kt-menu__link-bullet--line"><span></span></i><span class="kt-menu__link-text">Fluid Dashboard</span></a></li>
-              </ul>
-            </div>
-          </li>
-        </ul>
       </div>
-      <div class="kt-header-toolbar">
-        <a href="#" class="btn btn-wide btn-bold btn-danger btn-upper">Purchase</a>
+      <div v-if="getCredential.username !== ''" class="kt-header-toolbar">
+        <div class="col-sm">
+          <div v-if="getProgressBar" class="kt-spinner kt-spinner--lg kt-spinner--warning" style="margin-right: 30px;"></div>
+        </div>
+        <!-- <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
+        <select class="custom-select" ref="selectModel" style="width: 120%;">
+          <option v-for="customModel in getCustomModels" v-bind:value="customModel.name" v-bind:key="customModel.customization_id">{{customModel.name}}</option>
+        </select>
+        <a href="#" class="btn btn-bold btn-danger btn-upper" style="margin-left: 10px;" v-on:click="clickCreateBtn">
+          <i class="flaticon2-plus" style="font-size:14px;">&nbsp;Create</i>
+        </a>
+        <a href="#" class="btn btn-bold btn-danger btn-upper" style="margin-left: 10px;" v-on:click="clickDeleteBtn">
+          <i class="flaticon2-rubbish-bin" style="font-size:14px;">&nbsp;Delete</i>
+        </a>
       </div>
     </div>
     <!-- end: Header Menu -->
+    <modal v-show="createModel" :myWidth="'25%'" :myHeight="'60%'">
+        <div slot="header">
+          <h3>Create Custom Model</h3>
+        </div>
+        <span slot="body">
+          <div class="modal-body-content">
+            <label>Name</label>
+            <br>
+            <input type="text" v-model="name" placeholder="Name" style="margin-bottom: 5px;">
+          </div>
+          <div class="modal-body-content">
+            <label>Description</label>
+            <br>
+            <input type="text" v-model="description" placeholder="Description" style="margin-bottom: 5px;">
+          </div>
+          <div class="modal-body-content">
+            <label>Base Model</label>
+            <br>
+            <select name="basemodel" class="custom-select" v-model="selectedBaseModel">
+              <option value="ko-KR_BroadbandModel">ko-KR_BroadbandModel</option>
+              <option value="ko-KR_NarrowbandModel">ko-KR_NarrowbandModel</option>
+            </select>
+          </div>
+        </span>
+        <span slot="footer">
+          <button class="modal-default-button" v-if="name !== ''" v-on:click="createCustomModel">
+            Create
+          </button>
+          <button class="modal-default-button" v-on:click="modalOff()">
+            Close
+          </button>
+        </span>
+      </modal>
+
+      <modal v-show="deleteModel" :myWidth="'30%'" :myHeight="'40%'">
+        <div slot="header">
+          <h3>Delete Custom Model</h3>
+        </div>
+        <span slot="body">
+          <div>
+            <p>선택한 모델을 삭제하시겠습니까?</p>
+          </div>
+        </span>
+        <span slot="footer">
+          <button class="modal-default-button" v-on:click="deleteCustomModel">Delete</button>
+          <button class="modal-default-button" v-on:click="modalOff()">Close</button>
+        </span>
+      </modal>
   </div>
 </template>
 
 <script>
+/* eslint-disable */
+import backendAPI from '../../../api/backendAPI'
+import Constant from '../../../constant'
+import Modal from '../../Common/Modal'
+import {mapGetters} from 'vuex'
+
 export default {
+  name: 'Header',
+  computed: {
+    ...mapGetters (['getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel', 'getProgressBar', 'getSelectedModelStatus']),
+  },
+  data() {
+    return {
+      name: '',
+      description: '',
+      selectedBaseModel: 'ko-KR_BroadbandModel',
+      createModel: false,
+      deleteModel: false,
+      progressWidth: window.innerWidth/3,
+    }
+  },
+  watch: {
+    getCredential: () => {
+      this.uploadVideoButton();
+    },
+    name(newVal) {
+      this.name = newVal;
+    },
+    description(newVal) {
+      this.description = newVal;
+    },
+    selectedBaseModel(newVal) {
+      this.selectedBaseModel = newVal;
+    },
+  },
+  components: {
+    Modal,
+  },
+  methods: {
+    createCustomModel: function (event) {
+      let params = {
+        username: this.getCredential.username,
+        password: this.getCredential.password,
+        name: this.name,
+        base_model_name: this.selectedBaseModel,
+        description: this.description,
+      }
+      this.$store.dispatch(Constant.CREATE_CUSTOM_MODEL, params);
+      this.modalOff();
+    },
+    deleteCustomModel: function (event) {
+      let params = {
+        username: this.getCredential.username,
+        password: this.getCredential.password,
+        customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id
+      }
+      this.$store.dispatch(Constant.DELETE_CUSTOM_MODEL, params);
+      this.modalOff();
+    },
+    getCustomModel: () => {
+      let params = {
+        username: this.$refs.username.value,
+        password: this.$refs.password.value,
+      }
+      this.$store.dispatch(Constant.FETCH_CUSTOM_MODELS, params);
+    },
+    exportXml: function () {
+      if (this.getState.login && this.getState.videofile) {
+        this.$store.dispatch(Constant.EXPORT_XML, { 
+          username: this.getCredential.username,
+          password: this.getCredential.password,
+          subtitles: this.getSubtitles,
+          customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id
+        });
+      }
+    },
+    clickCreateBtn: function() {
+      this.createModel = true;
+    },
+    clickDeleteBtn: function() {
+      this.deleteModel = true;
+    },
+    modalOff: function() {
+      this.createModel = false;
+      this.deleteModel = false;
+      this.clearInputTxt();
+    },
+    clearInputTxt: function() {
+      this.name = '';
+      this.description = '';
+      this.selectedBaseModel = 'ko-KR_BroadbandModel'
+    },
+    getProgressSize: function () {
+      return window.innerWidth/4;
+    },
+    progressbar: function() {
+      var options = {
+        text: {
+          color: '#FFFFFF',
+          shadowEnable: true,
+          shadowColor: '#000000',
+          fontSize: 14,
+          fontFamily: 'Helvetica',
+          dynamicPosition: false,
+          hideText: false
+        },
+        progress: {
+          color: '#2dbd2d',
+          backgroundColor: '#C0C0C0'
+        },
+        layout: {
+          height: 35,
+          width: 140,
+          verticalTextAlign: 61,
+          horizontalTextAlign: 43,
+          zeroOffset: 0,
+          strokeWidth: 30,
+          progressPadding: 0,
+          type: 'line'
+        }
+      }
+    },
+  }
 };
 </script>
+
+<style scoped>
+.button-on {
+  color: #525c5d !important;
+}
+.button-off {
+  color: #adb5bd !important;
+}
+.modal-header h3 {
+  margin-top: 0;
+  /* color: #42b983; */
+  color:royalblue;
+  font-size: 22px;
+  font-weight: bold;
+}
+.modal-body-content {
+  margin: 5px;
+}
+.modal-body p {
+  color:rgba(0, 0, 0, 0.650);
+  font-weight: bold;
+  font-size: 15px;
+}
+.modal-body label {
+  color:rgba(0, 0, 0, 0.650);
+  font-weight: bold;
+  font-size: 15px;
+}
+.modal-footer h1 {
+    font-size: 17px;
+    color:#fff;
+}
+.modal-footer button {
+    color: white;
+    font-weight: bold;
+    width: 80px;
+    height: 30px;
+    font-size: 16px;
+    background: #4AAE9B;
+    border: 1px solid #4AAE9B;
+    /* background-color: #6255ff;
+    border-color: #5648ff; */
+    background-color:rgb(92, 142, 235);
+    border-color: cornflowerblue;
+    border-radius: 5px;
+}
+</style>

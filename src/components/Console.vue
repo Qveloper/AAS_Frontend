@@ -10,8 +10,9 @@
       <Header/>
       <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-grid--stretch">
         <div class="kt-body kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-grid--stretch" id="kt_body">
+          <div v-if="getProgressBar" class="modal-mask"></div>
           <div class="kt-content kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-            <Subheader/>
+            <!-- <Subheader/> -->
             <!--[html-partial:include:{"file":"partials/_content/base.html"}]/-->
             <Content/>
             <router-view/>
@@ -23,6 +24,10 @@
     </div>
   </div>
 </div>
+  <loading :active.sync="getIsLoading"
+        :can-cancel="false"
+        :loader="'dots'"
+        :color="'#696ffb'"></loading>
   </div>
 </template>
 
@@ -47,7 +52,8 @@ export default {
     Header,
     Subheader,
     Content,
-    Footer
+    Footer,
+    Loading
   },
   computed: {
     ...mapGetters (['getIsLoading', 'getProgressBar']),

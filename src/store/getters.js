@@ -57,4 +57,7 @@ export default {
   getCustomIdBySelectedModel(state) {
     return modelName => state.customModels.find(n => n.name === modelName);
   },
+  getSelectedModelStatus(state) {
+    return state.state.selectedModelStatus;
+  },
 };
