@@ -4,13 +4,14 @@
   <div class="kt-grid kt-grid--desktop kt-grid--ver-desktop  kt-inbox" id="kt_inbox">
     <!--Begin:: Inbox Aside-->
     <div class="kt-grid__item kt-portlet kt-inbox__aside" id="kt_inbox_aside" style="width: 40%; opacity: 1;">
-        <button type="button" class="btn btn-brand  btn-upper btn-bold  kt-inbox__compose" data-toggle="modal" data-target="#kt_inbox_compose">
+        <!-- <button type="button" class="btn btn-brand  btn-upper btn-bold  kt-inbox__compose" data-toggle="modal" data-target="#kt_inbox_compose">
           <i class="flaticon2-send-1"></i>
           Preview
-        </button>
-
+        </button> -->
+        <h3 style="text-align: center;">Preview</h3>
         <div class="kt-inbox__nav">
-            <ul class="kt-nav">
+          <video-player :options="videoOptions"/>
+            <!-- <ul class="kt-nav">
                 <li class="kt-nav__item">
                     <a href="#" class="kt-nav__link" data-action="list" data-type="inbox">
                         <i class="kt-nav__link-icon flaticon2-mail"></i>
@@ -72,7 +73,7 @@
                         <span class="kt-nav__link-text">Add Label</span>
                     </a>
                 </li>
-            </ul>
+            </ul> -->
       </div>
     </div>
     <!--End::Aside-->
@@ -236,9 +237,13 @@
 import {mapGetters} from 'vuex'
 import Constant from '../../../constant'
 import backendAPI from '../../../api/backendAPI'
+import VideoPlayer from '../../Common/VideoPlayer'
 
 export default {
   name: 'Content',
+  components: {
+    VideoPlayer
+  },
   data() {
     return {
       tag: '',
@@ -250,6 +255,24 @@ export default {
       deleteModel: false,
       progressWidth: window.innerWidth/3,
       selectModel: '49668e87-a75e-4413-b2c0-ea10308108c9',
+      videoOptions: {
+				autoplay: false,
+        controls: true,
+        fluid: true,
+				sources: [
+					{
+						src: "/static/video_player/video/test.mp4",
+						type: "video/mp4"
+					}
+        ],
+        tracks: [
+          {
+            src: '/static/video_player/vtt/test.vtt',
+            default: true,
+            label: 'test'
+          }
+        ],
+			}
     };
   },
   computed: {
@@ -268,8 +291,8 @@ export default {
       let params = {
         username: this.getCredential.username,
         password: this.getCredential.password,
-        // customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id
-        customization_id: this.selectModel
+        // customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id,
+        customization_id: this.getSelectedModel
       }
 
       const formdata = new FormData();
@@ -290,8 +313,8 @@ export default {
           username: this.getCredential.username,
           password: this.getCredential.password,
           subtitles: this.getSubtitles,
-          // customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id
-          customization_id: this.selectModel
+          // customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id,
+          customization_id: this.getSelectedModel
         });
       }
     },
