@@ -10,7 +10,7 @@
           </div>
         </div>
         <ul class="navigation-menu">
-          <li class="nav-category-divider">Option</li>
+          <li class="nav-category-divider" @click="test">Option</li>
           <li>
             <a>
               <span class="link-title">자막 끝 구분</span>
@@ -37,6 +37,8 @@
 <script>
 /* eslint-disable */
 import VideoPlayer from "./VideoPlayer";
+import webvtt from 'node-webvtt';
+import {mapGetters} from 'vuex'
 
 export default {
   name: 'Sidebar',
@@ -55,16 +57,25 @@ export default {
 						type: "video/mp4"
 					}
         ],
-        tracks: [
-          {
-            src: '/static/video_player/vtt/test.vtt',
-            default: true,
-            label: 'test'
-          }
-        ],
+        html5: {
+          nativeTextTracks: false
+        }
 			}
 		};
-	}
+  },
+  computed: {
+    ...mapGetters (['getSubtitles']),
+  },
+  methods: {
+    test() {
+      let webVTT = {
+        valid: true,
+        cues: this.getSubtitles,
+      }
+      const compile = webvtt.compile(webVTT);
+      console.log(compile)
+    }
+  }
 };
 </script>
 

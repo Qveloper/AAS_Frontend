@@ -152,12 +152,13 @@
 import backendAPI from '../../api/backendAPI'
 import Constant from '../../constant'
 import Modal from './Modal'
+import webvtt from 'node-webvtt';
 import {mapGetters} from 'vuex'
 
 export default {
   name: 'Header',
   computed: {
-    ...mapGetters (['getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel', 'getFileName', 'getSubtitles', 'getProgressBar', 'getSelectedModelStatus']),
+    ...mapGetters (['getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel', 'getFileName', 'getSubtitles', 'getProgressBar', 'getSelectedModelStatus', 'getVideoPlayer']),
   },
   data() {
     return {
@@ -210,6 +211,7 @@ export default {
 
       const formdata = new FormData();
       const targetFile = event.target.files[0];
+
       formdata.append('videofile', targetFile);
 
       let payload = {
@@ -217,7 +219,10 @@ export default {
         formdata: formdata
       };
 
-      this.$store.dispatch(Constant.RECOGNIZE_VIDEO, payload);
+      this.$store.dispatch(Constant.RECOGNIZE_VIDEO, payload)
+        .then(function() {
+          this.updateSubtitle()
+        }.bind(this))
       this.$store.commit(Constant.SET_FILENAME, targetFile.name.split('.').slice(0,-1) + '.xml');
     },
     createCustomModel: function (event) {
@@ -312,6 +317,24 @@ export default {
         }
       }
     },
+    updateSubtitle: function () {
+      let webVTT = {
+        valid: true,
+        cues: this.getSubtitles,
+      }
+      const compile = webvtt.compile(webVTT);
+      const uri = 'data:text/vtt;base64,' + btoa(unescape(encodeURIComponent(compile)))
+      
+      this.getVideoPlayer.videoPlayerObject.ready(function () {
+        this.removeRemoteTextTrack(this.remoteTextTracks()[0])
+        this.addRemoteTextTrack({
+          src: uri,
+          default: true,
+          mode: 'showing',
+          label: 'test'
+        }, true)
+      })
+    }
   }
 };
 </script>

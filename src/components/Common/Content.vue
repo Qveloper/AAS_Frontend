@@ -34,7 +34,7 @@
                             </td>
                             <td style="padding-left:0px;">
                               <div class="col-md-9 showcase_content_area" style="max-width:100%;">
-                                <input type="text" @keyup.ctrl.219="chunkUp" @keyup.ctrl.221="chunkDown" @keyup.enter.exact="playCurrentTime" v-bind:value="subtitle.text" v-bind:index="index" @input="updateValue" v-on:focus="focusOn" v-on:focusout="focusOut" class="form-control form-control-lg" id="inputType12" :style="[ subtitle.initData ? { 'font-style':'italic', 'font-weight':'bold' } : { 'font-style':'normal', 'font-weight':'normal' }]">
+                                <input type="text" @keyup.ctrl.219="chunkUp" @keyup.ctrl.221="chunkDown" @keyup.ctrl.190="playCurrentTime" v-bind:value="subtitle.text" v-bind:index="index" @input="updateValue" v-on:focus="focusOn" v-on:focusout="focusOut" class="form-control form-control-lg" id="inputType12" :style="[ subtitle.initData ? { 'font-style':'italic', 'font-weight':'bold' } : { 'font-style':'normal', 'font-weight':'normal' }]">
                               </div>
                             </td>
                           </tr>
@@ -63,6 +63,7 @@
 /* eslint-disable */
 import {mapGetters} from 'vuex'
 import Constant from '../../constant'
+import webvtt from 'node-webvtt';
 
 export default {
   name: 'Content',
@@ -99,6 +100,7 @@ export default {
         currentInitData = false
       }
       this.$store.commit(Constant.SET_SUBTITLE, {index: currentIndex, text: e.target.value, initData: currentInitData})
+      this.updateSubtitle(currentIndex)
     },
     chunkDown: function (e) {
       let currentIndex = parseInt(e.currentTarget.getAttribute('index'))
@@ -143,6 +145,7 @@ export default {
           text += ' ';
       });
       this.$store.commit(Constant.SET_SUBTITLE, {index: currentIndex, text: text, initData: true})
+      this.updateSubtitle(currentIndex)
     },
     playCurrentTime: function (e) {
       if (this.getVideoPlayer.videoPlayerObject.paused()){
@@ -151,6 +154,26 @@ export default {
         this.getVideoPlayer.videoPlayerObject.pause()
       }
     },
+    updateSubtitle: function (currentIndex) {
+      let webVTT = {
+        valid: true,
+        cues: this.getSubtitles,
+      }
+      const compile = webvtt.compile(webVTT);
+      const uri = 'data:text/vtt;base64,' + btoa(unescape(encodeURIComponent(compile)))
+
+      this.getVideoPlayer.videoPlayerObject.ready(function () {
+        this.getVideoPlayer.videoPlayerObject.removeRemoteTextTrack(this.getVideoPlayer.videoPlayerObject.remoteTextTracks()[0])
+        this.getVideoPlayer.videoPlayerObject.addRemoteTextTrack({
+          src: uri,
+          default: true,
+          mode: 'showing',
+          label: 'test'
+        }, true)
+        this.getVideoPlayer.videoPlayerObject.pause()
+        this.getVideoPlayer.videoPlayerObject.currentTime(this.getSubtitles[currentIndex].start)
+      }.bind(this))
+    }
   }
 };
 </script>
