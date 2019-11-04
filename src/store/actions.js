@@ -94,7 +94,7 @@ export default {
           store.commit(Constant.SET_SUBTITLES, subtitles);
           store.commit(Constant.SET_STATE_VIDEOFILE, true);
           store.commit(Constant.SET_IS_LOADING, false);
-          resolve();
+          resolve(response.data);
         });
     })
   ),

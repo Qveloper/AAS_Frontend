@@ -10,7 +10,7 @@
           </div>
         </div>
         <ul class="navigation-menu">
-          <li class="nav-category-divider" @click="test">Option</li>
+          <li class="nav-category-divider">Option</li>
           <li>
             <a>
               <span class="link-title">자막 끝 구분</span>
@@ -52,10 +52,6 @@ export default {
         controls: true,
         fluid: true,
 				sources: [
-					{
-						src: "/static/video_player/video/test.mp4",
-						type: "video/mp4"
-					}
         ],
         html5: {
           nativeTextTracks: false
@@ -65,16 +61,6 @@ export default {
   },
   computed: {
     ...mapGetters (['getSubtitles']),
-  },
-  methods: {
-    test() {
-      let webVTT = {
-        valid: true,
-        cues: this.getSubtitles,
-      }
-      const compile = webvtt.compile(webVTT);
-      console.log(compile)
-    }
   }
 };
 </script>

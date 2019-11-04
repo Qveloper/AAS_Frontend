@@ -220,8 +220,8 @@ export default {
       };
 
       this.$store.dispatch(Constant.RECOGNIZE_VIDEO, payload)
-        .then(function() {
-          this.updateSubtitle()
+        .then(function(response) {
+          this.initSubtitle(response.videoUrl)
         }.bind(this))
       this.$store.commit(Constant.SET_FILENAME, targetFile.name.split('.').slice(0,-1) + '.xml');
     },
@@ -317,14 +317,18 @@ export default {
         }
       }
     },
-    updateSubtitle: function () {
+    initSubtitle: function (videoUrl) {
       let webVTT = {
         valid: true,
         cues: this.getSubtitles,
       }
       const compile = webvtt.compile(webVTT);
       const uri = 'data:text/vtt;base64,' + btoa(unescape(encodeURIComponent(compile)))
-      
+
+      this.getVideoPlayer.videoPlayerObject.src({
+        src: 'http://localhost:3000/uploads/' + videoUrl,
+        type: "video/mp4"
+      })
       this.getVideoPlayer.videoPlayerObject.ready(function () {
         this.removeRemoteTextTrack(this.remoteTextTracks()[0])
         this.addRemoteTextTrack({
