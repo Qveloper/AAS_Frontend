@@ -186,7 +186,7 @@
           </div>
           <div v-else-if="!getRecognizeResult.length <= 0"></div>
             <div v-for="(subtitle, index) in getSubtitles" :key="index" class="kt-inbox__items" data-type="draft">
-                <div class="kt-inbox__item" data-id="16" data-type="draft">
+                <div class="kt-inbox__item" data-id="16" data-type="draft" style="align-items: center;">
                     <div class="kt-inbox__info">
                         <div class="kt-inbox__actions">
                             <!-- <label class="kt-checkbox kt-checkbox--single kt-checkbox--tick kt-checkbox--brand">
