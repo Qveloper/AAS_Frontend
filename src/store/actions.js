@@ -60,37 +60,44 @@ export default {
         }, 3000);
       });
   },
-  [Constant.RECOGNIZE_VIDEO]: (store, payload) => {
-    store.commit(Constant.SET_IS_LOADING, true);
-    backendAPI.recognizeVideo(payload.formdata, payload.params)
-      .then((response) => {
-        // 단어의 timestamp 정보만 따로 정제
-        let tmpTimestamps = [];
-        response.data.results.forEach((element) => {
-          tmpTimestamps = tmpTimestamps.concat(element.alternatives[0].timestamps);
-        });
-        // end 타임과 start 타임이 다른 구간을 기준으로 자름
-        const timestamps = [[]];
-        tmpTimestamps.forEach((element, index, array) => {
-          timestamps[timestamps.length - 1].push(element);
-          if (index !== array.length - 1 && element[2] !== array[index + 1][1]) {
-            timestamps[timestamps.length] = [];
-          }
-        });
-        store.commit(Constant.SET_RECOGNIZE_RESULT, timestamps);
+  [Constant.RECOGNIZE_VIDEO]: (store, payload) => (
+    new Promise((resolve) => {
+      store.commit(Constant.SET_IS_LOADING, true);
+      backendAPI.recognizeVideo(payload.formdata, payload.params)
+        .then((response) => {
+          // 단어의 timestamp 정보만 따로 정제
+          let tmpTimestamps = [];
+          response.data.results.forEach((element) => {
+            tmpTimestamps = tmpTimestamps.concat(element.alternatives[0].timestamps);
+          });
+          // end 타임과 start 타임이 다른 구간을 기준으로 자름
+          const timestamps = [[]];
+          tmpTimestamps.forEach((element, index, array) => {
+            timestamps[timestamps.length - 1].push(element);
+            if (index !== array.length - 1 && element[2] !== array[index + 1][1]) {
+              timestamps[timestamps.length] = [];
+            }
+          });
+          store.commit(Constant.SET_RECOGNIZE_RESULT, timestamps);
 
-        // 화면 표시 및 서버 전송용 Data 정제
-        const subtitles = [];
-        timestamps.forEach(() => {
-          const obj = {};
-          obj.initData = true;
-          subtitles.push(obj);
+          // 화면 표시 및 서버 전송용 Data 정제
+          const subtitles = [];
+          timestamps.forEach(() => {
+            const obj = {};
+            // 화면 표시용
+            obj.initData = true;
+            // WebVTT Format
+            obj.identifier = '';
+            obj.styles = '';
+            subtitles.push(obj);
+          });
+          store.commit(Constant.SET_SUBTITLES, subtitles);
+          store.commit(Constant.SET_STATE_VIDEOFILE, true);
+          store.commit(Constant.SET_IS_LOADING, false);
+          resolve(response.data);
         });
-        store.commit(Constant.SET_SUBTITLES, subtitles);
-        store.commit(Constant.SET_STATE_VIDEOFILE, true);
-        store.commit(Constant.SET_IS_LOADING, false);
-      });
-  },
+    })
+  ),
   [Constant.EXPORT_XML]: (store, payload) => {
     store.commit(Constant.SET_IS_LOADING, true);
     const params = payload;

@@ -126,7 +126,7 @@
                           <ul class="kt-nav" style="margin-bottom: 15px;">
                               <li class="kt-nav__head">
                                   Keyboard Shortcut
-                                  <i class="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title=""                           data-original-title="Click to learn more..."></i>
+                                  <i class="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title="" data-original-title="Click to learn more..."></i>
                               </li>
                               <li class="kt-nav__separator"></li>
                               <li class="kt-nav__item">
@@ -161,7 +161,7 @@
                                       <i class="kt-nav__link-icon fa fa-play-circle"></i>
                                       <span class="kt-nav__link-text">구간 재생</span>
                                       <span class="kt-nav__link-badge">
-                                        <span class="badge badge-pill badge-warning">Enter</span>
+                                        <span class="badge badge-pill badge-warning">Ctrl + ></span>
                                       </span>
                                   </a>
                               </li>
@@ -194,12 +194,12 @@
                                 <span></span>
                             </label> -->
                           <span class="kt-inbox__icon" data-toggle="kt-tooltip" data-placement="right" title="구간 재생" data-original-title="Play">
-                            <i class="fa fa-play" @click="playCurrentTime" v-bind:index="index"></i>
+                            <i class="fa fa-play" @click="playCurrentTime" v-bind:index="index" style="color: #8a8a8a"></i>
                           </span>
                         </div>
                         <div class="kt-inbox__actions">
                           <span class="kt-inbox__icon" data-toggle="kt-tooltip" data-placement="right" title="구간 초기화" data-original-title="Reset">
-                            <i v-if="!subtitle.initData" class="fa fa-undo-alt" v-bind:index="index" @click="resetSubtitle"></i>
+                            <i v-if="!subtitle.initData" class="fa fa-undo-alt" v-bind:index="index" @click="resetSubtitle" style="color: #8a8a8a"></i>
                           </span>
                         </div>
                         <div class="kt-inbox__sender" data-toggle="view">
@@ -212,7 +212,7 @@
                     <div class="kt-inbox__details" data-toggle="view">
                         <div class="kt-inbox__message">
                           <span class="kt-inbox__subject">
-                            <input type="text" @keyup.ctrl.219="chunkUp" @keyup.ctrl.221="chunkDown" @keyup.enter.exact="playCurrentTime" v-bind:value="subtitle.text" v-bind:index="index" @input="updateValue" v-on:focus="focusOn" v-on:focusout="focusOut" class="form-control form-control-lg" id="inputType12" :style="[ subtitle.initData ? { 'font-style':'italic', 'font-weight':'bold' } : { 'font-style':'normal', 'font-weight':'normal' }]">
+                            <input type="text" @keyup.ctrl.219="chunkUp" @keyup.ctrl.221="chunkDown" @keyup.ctrl.190="playCurrentTime" v-bind:value="subtitle.text" v-bind:index="index" @input="updateValue" v-on:focus="focusOn" v-on:focusout="focusOut" class="form-control form-control-lg" id="inputType12" :style="[ subtitle.initData ? { 'font-style':'italic', 'font-weight':'bold' } : { 'font-style':'normal', 'font-weight':'normal' }]">
                           </span>
                             <!-- <span class="kt-inbox__subject">Verification of your card transaction - </span>
                             <span class="kt-inbox__summary">What you requested can't be arranged ahead of time but PalmLake said they'll do their best to accommodate you upon arrival....</span> -->
@@ -238,6 +238,7 @@ import {mapGetters} from 'vuex'
 import Constant from '../../../constant'
 import backendAPI from '../../../api/backendAPI'
 import VideoPlayer from '../../Common/VideoPlayer'
+import webvtt from 'node-webvtt';
 
 export default {
   name: 'Content',
@@ -260,18 +261,10 @@ export default {
         controls: true,
         fluid: true,
 				sources: [
-					{
-						src: "/static/video_player/video/test.mp4",
-						type: "video/mp4"
-					}
         ],
-        tracks: [
-          {
-            src: '/static/video_player/vtt/test.vtt',
-            default: true,
-            label: 'test'
-          }
-        ],
+        html5: {
+          nativeTextTracks: false
+        }
 			}
     };
   },
@@ -292,7 +285,7 @@ export default {
         username: this.getCredential.username,
         password: this.getCredential.password,
         // customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id,
-        customization_id: this.getSelectedModel
+        customization_id: this.selectModel
       }
 
       const formdata = new FormData();
@@ -304,7 +297,10 @@ export default {
         formdata: formdata
       };
 
-      this.$store.dispatch(Constant.RECOGNIZE_VIDEO, payload);
+      this.$store.dispatch(Constant.RECOGNIZE_VIDEO, payload)
+        .then(function(response) {
+          this.initSubtitle(response.videoUrl)
+        }.bind(this))
       this.$store.commit(Constant.SET_FILENAME, targetFile.name.split('.').slice(0,-1) + '.xml');
     },
     exportXml: function () {
@@ -314,7 +310,7 @@ export default {
           password: this.getCredential.password,
           subtitles: this.getSubtitles,
           // customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id,
-          customization_id: this.getSelectedModel
+          customization_id: this.selectModel
         });
       }
     },
@@ -346,6 +342,8 @@ export default {
         currentInitData = false
       }
       this.$store.commit(Constant.SET_SUBTITLE, {index: currentIndex, text: e.target.value, initData: currentInitData})
+      this.updateSubtitle(currentIndex)
+
     },
     chunkDown: function (e) {
       let currentIndex = parseInt(e.currentTarget.getAttribute('index'))
@@ -390,6 +388,8 @@ export default {
           text += ' ';
       });
       this.$store.commit(Constant.SET_SUBTITLE, {index: currentIndex, text: text, initData: true})
+      this.updateSubtitle(currentIndex)
+
     },
     playCurrentTime: function (e) {
       if (this.getVideoPlayer.videoPlayerObject.paused()){
@@ -398,6 +398,48 @@ export default {
         this.getVideoPlayer.videoPlayerObject.pause()
       }
     },
+    updateSubtitle: function (currentIndex) {
+      let webVTT = {
+        valid: true,
+        cues: this.getSubtitles,
+      }
+      const compile = webvtt.compile(webVTT);
+      const uri = 'data:text/vtt;base64,' + btoa(unescape(encodeURIComponent(compile)))
+
+      this.getVideoPlayer.videoPlayerObject.ready(function () {
+        this.getVideoPlayer.videoPlayerObject.removeRemoteTextTrack(this.getVideoPlayer.videoPlayerObject.remoteTextTracks()[0])
+        this.getVideoPlayer.videoPlayerObject.addRemoteTextTrack({
+          src: uri,
+          default: true,
+          mode: 'showing',
+          label: 'test'
+        }, true)
+        this.getVideoPlayer.videoPlayerObject.pause()
+        this.getVideoPlayer.videoPlayerObject.currentTime(this.getSubtitles[currentIndex].start)
+      }.bind(this))
+    },
+    initSubtitle: function (videoUrl) {
+      let webVTT = {
+        valid: true,
+        cues: this.getSubtitles,
+      }
+      const compile = webvtt.compile(webVTT);
+      const uri = 'data:text/vtt;base64,' + btoa(unescape(encodeURIComponent(compile)))
+
+      this.getVideoPlayer.videoPlayerObject.src({
+        src: 'http://localhost:3000/uploads/' + videoUrl,
+        type: "video/mp4"
+      })
+      this.getVideoPlayer.videoPlayerObject.ready(function () {
+        this.removeRemoteTextTrack(this.remoteTextTracks()[0])
+        this.addRemoteTextTrack({
+          src: uri,
+          default: true,
+          mode: 'showing',
+          label: 'test'
+        }, true)
+      })
+    }
   }
 };
 </script>
