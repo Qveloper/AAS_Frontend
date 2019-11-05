@@ -113,7 +113,7 @@
           </div>
           <div v-else-if="getRecognizeResult.length > 0">
             <div v-for="(subtitle, index) in getSubtitles" :key="index" class="kt-inbox__items" data-type="draft">
-                <div class="kt-inbox__item" :data-id="index+1" data-type="draft">
+                <div class="kt-inbox__item" data-id="16" data-type="draft" style="align-items: center;">
                     <div class="kt-inbox__info">
                       <span class="badge badge-pill badge-info" style="width: 30px; font-size: 12px; margin-right:25px;">{{index+1}}</span>
                         <div class="kt-inbox__actions">
@@ -130,7 +130,7 @@
                             <span class="kt-media kt-media--circle kt-media--sm">
                                 <!-- <span><img alt="Pic" src="../../../assets/media/users/300_21.jpg" /></span> -->
                             </span>
-                            <a class="kt-inbox__author">{{subtitle.start}} ~ {{subtitle.end}}</a>
+                            <a href="#" class="kt-inbox__author">{{subtitle.start.toFixed(2)}} ~ {{subtitle.end.toFixed(2)}}</a>
                         </div>
                     </div>
                     <div class="kt-inbox__details" data-toggle="view">
@@ -205,7 +205,6 @@ export default {
       }
     },
     uploadVideo: function (event) {
-      console.log('UploadVideo() is called.')
       let params = {
         username: this.getCredential.username,
         password: this.getCredential.password,
@@ -288,9 +287,13 @@ export default {
           currentIndex += -1
         } else {
           targetValue = this.getRecognizeResult[currentIndex].pop()
+          // 자막 시간 겹치는 것을 방지
+          targetValue[1] += 0.001
         }
         this.getRecognizeResult[currentIndex+1].unshift(targetValue)
+        console.log(targetValue)
       }
+      this.updateSubtitle(currentIndex)
     },
     chunkUp: function (e) {
       let currentIndex = parseInt(e.currentTarget.getAttribute('index'))
@@ -305,9 +308,13 @@ export default {
           this.$store.commit(Constant.SPLICE_RECOGNIZE_RESULT, currentIndex)
         } else {
           targetValue = this.getRecognizeResult[currentIndex].shift()
+          // 자막 시간 겹치는 것을 방지
+          targetValue[2] -= 0.001
         }
         this.getRecognizeResult[currentIndex-1].push(targetValue)
+        console.log(targetValue)
       }
+      this.updateSubtitle(currentIndex)
     },
     resetSubtitle: function (e) {
       let currentIndex = parseInt(e.currentTarget.getAttribute('index'))
@@ -318,7 +325,6 @@ export default {
       });
       this.$store.commit(Constant.SET_SUBTITLE, {index: currentIndex, text: text, initData: true})
       this.updateSubtitle(currentIndex)
-
     },
     playCurrentTime: function (e) {
       if (this.getVideoPlayer.videoPlayerObject.paused()){
