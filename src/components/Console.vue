@@ -34,7 +34,7 @@
 <script>
 /* eslint-disable */
 import Header from './Layout/Header/Header'
-import Subheader from './Layout/Subheader/Subheader';
+// import Subheader from './Layout/Subheader/Subheader';
 import Footer from './Layout/Footer/Footer'
 import Content from './Layout/Content/Content'
 import BaseMobile from './Layout/Header/_base-mobile';
@@ -50,7 +50,7 @@ export default {
   components: {
     BaseMobile,
     Header,
-    Subheader,
+    // Subheader,
     Content,
     Footer,
     Loading

@@ -60,4 +60,7 @@ export default {
   getSelectedModelStatus(state) {
     return state.state.selectedModelStatus;
   },
+  getSelectedModelName(state) {
+    return state.state.selectedModelName;
+  },
 };

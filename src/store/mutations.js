@@ -58,4 +58,7 @@ export default {
   [Constant.SPLICE_SUBTITLE]: (state, index) => {
     state.subtitles.splice(index, 1);
   },
+  [Constant.SET_SELECTED_MODEL_NAME]: (state, payload) => {
+    state.state.selectedModelName = payload;
+  },
 };

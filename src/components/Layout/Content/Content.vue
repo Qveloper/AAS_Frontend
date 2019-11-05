@@ -11,69 +11,6 @@
         <h3 style="text-align: center;">Preview</h3>
         <div class="kt-inbox__nav">
           <video-player :options="videoOptions"/>
-            <!-- <ul class="kt-nav">
-                <li class="kt-nav__item">
-                    <a href="#" class="kt-nav__link" data-action="list" data-type="inbox">
-                        <i class="kt-nav__link-icon flaticon2-mail"></i>
-                        <span class="kt-nav__link-text">Inbox</span>
-                            <span class="kt-nav__link-badge">
-                            <span class="kt-badge kt-badge--unified-success kt-badge--md kt-badge--rounded kt-badge--boldest">3</span>
-                        </span>
-                    </a>
-                </li>
-                <li class="kt-nav__item">
-                    <a href="#" class="kt-nav__link" data-action="list" data-type="marked">
-                        <i class="kt-nav__link-icon flaticon-star"></i>
-                        <span class="kt-nav__link-text">Marked</span>
-                    </a>
-                </li>
-                <li class="kt-nav__item kt-nav__item--active">
-                    <a href="#" class="kt-nav__link" data-action="list" data-type="draft">
-                        <i class="kt-nav__link-icon flaticon2-writing"></i>
-                        <span class="kt-nav__link-text">Draft</span>
-                            <span class="kt-nav__link-badge">
-                            <span class="kt-badge kt-badge--unified-warning kt-badge--md kt-badge--rounded kt-badge--boldest">1</span>
-                        </span>
-                    </a>
-                </li>
-                <li class="kt-nav__item">
-                    <a href="#" class="kt-nav__link" data-action="list" data-type="sent">
-                        <i class="kt-nav__link-icon flaticon2-mail-1"></i>
-                        <span class="kt-nav__link-text">Sent</span>
-                    </a>
-                </li>
-                <li class="kt-nav__item">
-                    <a href="#" class="kt-nav__link" data-action="list" data-type="trash">
-                        <i class="kt-nav__link-icon flaticon2-rubbish-bin"></i>
-                        <span class="kt-nav__link-text">Trash</span>
-                    </a>
-                </li>
-
-                <li class="kt-nav__item kt-margin-t-30">
-                    <a href="#" class="kt-nav__link">
-                        <i class="kt-nav__link-icon fa fa-genderless kt-font-warning"></i>
-                        <span class="kt-nav__link-text">Custom Work</span>
-                    </a>
-                </li>
-                <li class="kt-nav__item">
-                    <a href="#" class="kt-nav__link">
-                        <i class="kt-nav__link-icon fa fa-genderless kt-font-success"></i>
-                        <span class="kt-nav__link-text">Partnership</span>
-                    </a>
-                </li>
-                <li class="kt-nav__item">
-                    <a href="#" class="kt-nav__link">
-                        <i class="kt-nav__link-icon fa fa-genderless kt-font-info"></i>
-                        <span class="kt-nav__link-text">In Progres</span>
-                    </a>
-                </li>
-                <li class="kt-nav__item">
-                    <a href="#" class="kt-nav__link">
-                        <i class="kt-nav__link-icon fa flaticon2-plus"></i>
-                        <span class="kt-nav__link-text">Add Label</span>
-                    </a>
-                </li>
-            </ul> -->
       </div>
     </div>
     <!--End::Aside-->
@@ -82,15 +19,6 @@
         <div class="kt-portlet__head">
             <div class="kt-inbox__toolbar kt-inbox__toolbar--extended">
                 <div class="kt-inbox__actions kt-inbox__actions--expanded">
-                    <div class="kt-inbox__check">
-                        <!-- <label class="kt-checkbox kt-checkbox--single kt-checkbox--tick kt-checkbox--brand">
-                            <input type="checkbox">
-                            <span></span>
-                        </label> -->
-                        <!-- <button type="button" class="kt-inbox__icon" data-toggle="kt-tooltip" title="" data-original-title="Reload list">
-                            <i class="flaticon2-refresh-button"></i>
-                        </button> -->
-                    </div>
                     <span class="badge badge-pill badge-danger" style="width: 110px; height: 25px; text-align: center; font-weight: bolder; font-size: 12px; margin-right: 20px;">
                       <i class="fa fa-tools"></i>
                         &nbsp;Edit Tools&nbsp;&nbsp;
@@ -177,22 +105,18 @@
                 </div>
             </div>
         </div>
-        <div class="kt-portlet__body kt-portlet__body--fit-x">
-          <div class="kt-inbox__items" v-if="getRecognizeResult.length <= 0">
-            <div class="col-12 py-5">
-              <h4 style="text-align:center;">Welcome to AAS!</h4>
-              <p class="text-gray" style="text-align:center;"><i class="mdi mdi-upload"></i> 비디오를 업로드 해 주세요.</p>
-            </div>
+        <div class="kt-portlet__body kt-portlet__body--fit-x" style="max-height: 500px; overflow: scroll;">
+          <div v-if="!(getRecognizeResult.length > 0)" style="text-align: center; margin-top: 10%">
+              <i class="fa fa-file-video" style="font-size: 50px;"></i>
+              <h4>Welcome to AAS!</h4>
+              <p>비디오를 업로드 해 주세요.</p>
           </div>
-          <div v-else-if="!getRecognizeResult.length <= 0"></div>
+          <div v-else-if="getRecognizeResult.length > 0">
             <div v-for="(subtitle, index) in getSubtitles" :key="index" class="kt-inbox__items" data-type="draft">
-                <div class="kt-inbox__item" data-id="16" data-type="draft">
+                <div class="kt-inbox__item" :data-id="index+1" data-type="draft">
                     <div class="kt-inbox__info">
+                      <span class="badge badge-pill badge-info" style="width: 30px; font-size: 12px; margin-right:25px;">{{index+1}}</span>
                         <div class="kt-inbox__actions">
-                            <!-- <label class="kt-checkbox kt-checkbox--single kt-checkbox--tick kt-checkbox--brand">
-                                <input type="checkbox">
-                                <span></span>
-                            </label> -->
                           <span class="kt-inbox__icon" data-toggle="kt-tooltip" data-placement="right" title="구간 재생" data-original-title="Play">
                             <i class="fa fa-play" @click="playCurrentTime" v-bind:index="index" style="color: #8a8a8a"></i>
                           </span>
@@ -203,10 +127,10 @@
                           </span>
                         </div>
                         <div class="kt-inbox__sender" data-toggle="view">
-                            <span class="kt-media kt-media--circle kt-media--sm kt-media--dark">
-                                <span><img alt="Pic" src="../../../assets/media/users/300_21.jpg" /></span>
+                            <span class="kt-media kt-media--circle kt-media--sm">
+                                <!-- <span><img alt="Pic" src="../../../assets/media/users/300_21.jpg" /></span> -->
                             </span>
-                            <a href="#" class="kt-inbox__author">{{subtitle.start}} ~ {{subtitle.end}}</a>
+                            <a class="kt-inbox__author">{{subtitle.start}} ~ {{subtitle.end}}</a>
                         </div>
                     </div>
                     <div class="kt-inbox__details" data-toggle="view">
@@ -224,6 +148,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <!--End:: Inbox List-->
 </div>
@@ -255,7 +180,7 @@ export default {
       createModel: false,
       deleteModel: false,
       progressWidth: window.innerWidth/3,
-      selectModel: '49668e87-a75e-4413-b2c0-ea10308108c9',
+      // selectModel: '49668e87-a75e-4413-b2c0-ea10308108c9',
       videoOptions: {
 				autoplay: false,
         controls: true,
@@ -269,7 +194,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters (['getRecognizeResult', 'getSubtitles', 'getVideoPlayer', 'getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel', 'getFileName', 'getSubtitles', 'getProgressBar', 'getSelectedModelStatus']),
+    ...mapGetters (['getRecognizeResult', 'getSubtitles', 'getVideoPlayer', 'getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel', 'getFileName', 'getSubtitles', 'getProgressBar', 'getSelectedModelName', 'getSelectedModelStatus']),
   },
   methods: {
     toggleSidebar: function (event) {
@@ -285,9 +210,11 @@ export default {
         username: this.getCredential.username,
         password: this.getCredential.password,
         // customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id,
-        customization_id: this.selectModel
       }
-
+      if (this.getSelectedModelName !== '') {
+        params.customization_id = this.getCustomIdBySelectedModel(this.getSelectedModelName).customization_id
+      }
+      // console.log(this.getSelectedModelName, ', ',this.getCustomIdBySelectedModel(this.getSelectedModelName))
       const formdata = new FormData();
       const targetFile = event.target.files[0];
       formdata.append('videofile', targetFile);
@@ -304,14 +231,16 @@ export default {
       this.$store.commit(Constant.SET_FILENAME, targetFile.name.split('.').slice(0,-1) + '.xml');
     },
     exportXml: function () {
+      let params = {
+        username: this.getCredential.username,
+        password: this.getCredential.password,
+        subtitles: this.getSubtitles,
+      }
+      if(this.getSelectedModelName !== '') {
+        params.customization_id = this.getCustomIdBySelectedModel(this.getSelectedModelName).customization_id
+      }
       if (this.getState.login && this.getState.videofile) {
-        this.$store.dispatch(Constant.EXPORT_XML, { 
-          username: this.getCredential.username,
-          password: this.getCredential.password,
-          subtitles: this.getSubtitles,
-          // customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id,
-          customization_id: this.selectModel
-        });
+        this.$store.dispatch(Constant.EXPORT_XML, params);
       }
     },
     modalOff: function() {

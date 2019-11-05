@@ -25,4 +25,5 @@ export default {
   EXPORT_XML: 'exportXml',
   FETCH_CORPUS: 'fetchCorpus',
   TRAIN_MODEL: 'trainCustomModel',
+  SET_SELECTED_MODEL_NAME: 'setSelectedModelName',
 };

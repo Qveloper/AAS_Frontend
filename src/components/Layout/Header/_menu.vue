@@ -11,7 +11,8 @@
           <div v-if="getProgressBar" class="kt-spinner kt-spinner--lg kt-spinner--warning" style="margin-right: 30px;"></div>
         </div>
         <!-- <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
-        <select class="custom-select" ref="selectModel" style="width: 120%;">
+        <select class="custom-select" v-model="selectedModel" ref="selectModel" style="width: 120%;">
+          <option value="" selected disabled hidden>Select a Custom Model</option>
           <option v-for="customModel in getCustomModels" v-bind:value="customModel.name" v-bind:key="customModel.customization_id">{{customModel.name}}</option>
         </select>
         <a href="#" class="btn btn-bold btn-danger btn-upper" style="margin-left: 10px;" v-on:click="clickCreateBtn">
@@ -84,7 +85,7 @@ import {mapGetters} from 'vuex'
 export default {
   name: 'Header',
   computed: {
-    ...mapGetters (['getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel', 'getProgressBar', 'getSelectedModelStatus']),
+    ...mapGetters (['getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel', 'getProgressBar', 'getSelectedModelName', 'getSelectedModelStatus']),
   },
   data() {
     return {
@@ -93,6 +94,7 @@ export default {
       selectedBaseModel: 'ko-KR_BroadbandModel',
       createModel: false,
       deleteModel: false,
+      selectedModel: '',
       progressWidth: window.innerWidth/3,
     }
   },
@@ -109,6 +111,10 @@ export default {
     selectedBaseModel(newVal) {
       this.selectedBaseModel = newVal;
     },
+    selectedModel(newVal) {
+      this.selectedModel = newVal;
+      this.$store.commit(Constant.SET_SELECTED_MODEL_NAME, newVal);
+    }
   },
   components: {
     Modal,

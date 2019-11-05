@@ -14,6 +14,7 @@ export default {
     login: false,
     videofile: false,
     selectedModelStatus: 'training',
+    selectedModelName: '',
   },
   fileName: '',
   recognizeResult: {},
