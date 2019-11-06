@@ -3,7 +3,7 @@
 <div id="kt_header_mobile" class="kt-header-mobile  kt-header-mobile--fixed ">
   <div class="kt-header-mobile__logo">
     <a href="index.html">
-      <img alt="Logo" src="assets/media/logos/logo-5.png" />
+      <img alt="Logo" src="static/images/AAS_logo.png" style="width: 80px;"/>
     </a>
   </div>
   <div class="kt-header-mobile__toolbar">
