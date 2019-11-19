@@ -114,23 +114,25 @@ export default {
 
         fileLink.click();
 
-        backendAPI.addCorpus(params)
-          .then((res) => {
-            if (res.data.length !== 0) {
-              // store.dispatch(Constant.fetchCorpus, params);
-            }
-            store.commit(Constant.SET_CORPUS_NAME, res.data);
-            // store.commit(Constant.SET_IS_LOADING, false);
-            const fetchCorpusParams = {
-              username: params.username,
-              password: params.password,
-              customization_id: params.customization_id,
-              corpus_name: res.data.corpus_name,
-            };
-            store.commit(Constant.SET_IS_LOADING, false);
-            store.commit(Constant.SET_PROGRESS_STATUS, true);
-            store.dispatch(Constant.FETCH_CORPUS, fetchCorpusParams);
-          });
+        if (params.customization_id !== undefined) {
+          backendAPI.addCorpus(params)
+            .then((res) => {
+              if (res.data.length !== 0) {
+                // store.dispatch(Constant.fetchCorpus, params);
+              }
+              store.commit(Constant.SET_CORPUS_NAME, res.data);
+              // store.commit(Constant.SET_IS_LOADING, false);
+              const fetchCorpusParams = {
+                username: params.username,
+                password: params.password,
+                customization_id: params.customization_id,
+                corpus_name: res.data.corpus_name,
+              };
+              store.commit(Constant.SET_PROGRESS_STATUS, true);
+              store.dispatch(Constant.FETCH_CORPUS, fetchCorpusParams);
+            });
+        }
+        store.commit(Constant.SET_IS_LOADING, false);
       });
   },
   [Constant.TRAIN_MODEL]: (store, payload) => {

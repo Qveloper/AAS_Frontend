@@ -12,7 +12,7 @@
         </div>
         <!-- <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
         <select class="custom-select" v-model="selectedModel" ref="selectModel" style="width: 120%;">
-          <option value="" selected disabled hidden>Select a Custom Model</option>
+          <option value="" selected disabled hidden>Baseline Model (Default)</option>
           <option v-for="customModel in getCustomModels" v-bind:value="customModel.name" v-bind:key="customModel.customization_id">{{customModel.name}}</option>
         </select>
         <a href="#" class="btn btn-bold btn-danger btn-upper" style="margin-left: 10px;" v-on:click="clickCreateBtn">
@@ -95,7 +95,6 @@ export default {
       createModel: false,
       deleteModel: false,
       selectedModel: '',
-      progressWidth: window.innerWidth/3,
     }
   },
   watch: {
