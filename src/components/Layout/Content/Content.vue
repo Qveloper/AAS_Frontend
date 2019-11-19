@@ -362,7 +362,7 @@ export default {
       const uri = 'data:text/vtt;base64,' + btoa(unescape(encodeURIComponent(compile)))
 
       this.getVideoPlayer.videoPlayerObject.src({
-        src: 'http://localhost:3000/uploads/' + videoUrl,
+        src: 'http://' + window.location.hostname + ':3000/uploads/' + videoUrl,
         type: "video/mp4"
       })
       this.getVideoPlayer.videoPlayerObject.ready(function () {

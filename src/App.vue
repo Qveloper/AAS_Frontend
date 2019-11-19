@@ -1,7 +1,5 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+  <router-view style="display: flex; flex: 1;"/>
 </template>
 
 <script>
