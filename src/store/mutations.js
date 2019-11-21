@@ -61,4 +61,10 @@ export default {
   [Constant.SET_SELECTED_MODEL_NAME]: (state, payload) => {
     state.state.selectedModelName = payload;
   },
+  [Constant.SET_MODAL_MESSAGE]: (state, payload) => {
+    state.modal.message = payload;
+  },
+  [Constant.SET_MODAL_IS_SHOWING]: (state, payload) => {
+    state.modal.isShowing = payload;
+  },
 };

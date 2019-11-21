@@ -60,7 +60,25 @@ export default {
     });
   },
   exportXml(params) {
-    return axios.post(CONF.EXPORT, {
+    return axios.post(CONF.EXPORT_XML, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        subtitles: params.subtitles,
+        customization_id: params.customization_id,
+        fileName: params.fileName,
+      },
+    },
+    {
+      auth: {
+        username: params.username,
+        password: params.password,
+      },
+    });
+  },
+  exportText(params) {
+    return axios.post(CONF.EXPORT_TEXT, {
       headers: {
         'Content-Type': 'application/json',
       },

@@ -3,6 +3,8 @@
 */
 export default {
   SET_IS_LOADING: 'setIsLoading',
+  SET_MODAL_MESSAGE: 'setModalMessage',
+  SET_MODAL_IS_SHOWING: 'setModalIsShowing',
   FETCH_CREDENTIAL: 'fetchCredential',
   FETCH_CUSTOM_MODELS: 'fetchCustomModels',
   CREATE_CUSTOM_MODEL: 'createCustomModel',
@@ -23,6 +25,7 @@ export default {
   SET_PROGRESS_STATUS: 'setProgressBar',
   SPLICE_SUBTITLE: 'spliceSubtitle',
   EXPORT_XML: 'exportXml',
+  EXPORT_TEXT: 'exportText',
   FETCH_CORPUS: 'fetchCorpus',
   TRAIN_MODEL: 'trainCustomModel',
   SET_SELECTED_MODEL_NAME: 'setSelectedModelName',

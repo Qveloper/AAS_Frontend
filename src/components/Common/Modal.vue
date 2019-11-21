@@ -1,7 +1,8 @@
 <!-- template for the modal component -->
 <template>
   <transition name="modal">
-    <div class="modal-mask">
+    <div v-if="isShowing || (getModalIsShowing && isShowing === undefined)">
+      <div class="modal-mask">
         <div class="modal-wrapper">
             <!-- <div class="modal-container"> -->
             <div class="modal-container" :style="{ width: myWidth, 'max-height': myHeight + ' !important' }">
@@ -15,7 +16,7 @@
                 <div class="modal-body">
                     <slot name="body">
                       <!-- Modal Body -->
-                      <!-- {{  }} -->
+                      {{ getModalMessage }}
                     </slot>
                 </div>
 
@@ -28,29 +29,42 @@
                       <button class="modal-default-button" @click="close()">
                         Cancl
                       </button>
+                      <button v-if="modalType !== undefined && modalType.match('custom')" type="button" class="modal-default-button" @click="btnCustom()"> {{ customButton }}</button>
+                      <button type="button" class="modal-default-button" data-dismiss="modal" @click="close()">Confirm</button>
                     </slot>
                 </div>
             </div>
         </div>
+      </div>
     </div>
   </transition>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
+import Constant from '../../constant';
 
 export default {
   name: 'Modal',
   computed: {
-    ...mapGetters(['getIsLoading', 'getErrorMessage']),
+    ...mapGetters(['getModalIsShowing', 'getModalMessage']),
   },
-  props: ['myWidth', 'myHeight'],
+  props: ['myWidth', 'myHeight', 'modalType', 'customButton', 'isShowing'],
   methods: {
     select() {
       this.$emit('select');
     },
+    ...mapMutations(['setModalIsShowing']),
     close() {
       this.$emit('close');
+      this.$store.commit(Constant.SET_MODAL_IS_SHOWING, false);
+      // this.$emit('clickedCloseBtn');
+    },
+    btnOk() {
+      this.$emit('clickedOkBtn');
+    },
+    btnCustom() {
+      this.$emit('clickedCustomBtn');
     },
   },
 };

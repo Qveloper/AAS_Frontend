@@ -35,13 +35,28 @@
                           <label for="video_file" style="margin-bottom:0; line-height:1;"><i class="fa fa-video" ref="uploadVideoButton" v-bind:class="{'button-on': getState.login, 'button-off': !getState.login}"></i></label>
                           <input type="file" id="video_file" style="display:none;" v-bind:disabled="!getState.login" v-on:change="uploadVideo($event)">
                         </button>
-                         <button class="kt-inbox__icon" ref="exportXmlButton" :disabled="!getState.videofile" data-toggle="kt-tooltip" title="Export XML" data-original-title="Export XML">
-                          <!-- <i class="fa fa-backspace"></i> -->
-                          <i class="flaticon2-download" id="export_xml_button" v-on:click="exportXml" v-bind:class="{'button-on': getState.videofile, 'button-off': !getState.videofile}"></i>
-                        </button>
                         <!-- <button class="kt-inbox__icon" data-toggle="kt-tooltip" title="" data-original-title="Move">
                             <i class="flaticon2-expand"></i>
                         </button> -->
+                        <div class="btn-group show" data-toggle="kt-tooltip" title="Export" data-original-title="Export Subtitles">
+                            <button type="button" class="kt-inbox__icon kt-inbox__icon--light" data-toggle="dropdown" aria-expanded="true">
+                                <i class="flaticon2-download" v-bind:class="{'button-on': getState.videofile, 'button-off': !getState.videofile}"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-left dropdown-menu-fit dropdown-menu-xs" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 30px, 0px);">
+                                <ul class="kt-nav">
+                                    <li class="kt-nav__item" value="text">
+                                        <div class="kt-nav__link" v-on:click="exportText" :disabled="!getState.videofile">
+                                            <span class="kt-nav__link-text">Text</span>
+                                        </div>
+                                    </li>
+                                    <li class="kt-nav__item" value="xml">
+                                        <div class="kt-nav__link" v-on:click="exportXml" :disabled="!getState.videofile">
+                                            <span class="kt-nav__link-text">XML</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="kt-inbox__controls">
@@ -148,12 +163,25 @@
                 </div>
             </div>
         </div>
-    </div>
+      </div>
     </div>
     <!--End:: Inbox List-->
-</div>
-
-
+  </div>
+  <modal v-if="this.exportType !== ''" :modalType="'default'" :myWidth="'25%'" :myHeight="'30%'">
+    <div slot="header">
+      <h3>Export</h3>
+    </div>
+    <span slot="body">
+      <div>
+        <p v-if="getRecognizeResult.length > 0"> {{ exportType }} 타입으로 Export 하시겠습니까?</p>
+        <p v-else>자막 Export는 영상 업로드 후 수행 가능합니다.</p>
+      </div>
+    </span>
+    <span slot="footer">
+      <button v-if="getRecognizeResult.length > 0" class="modal-default-button" v-on:click="clikedExportBtn()">OK</button>
+      <button class="modal-default-button" v-on:click="modalOff()">Close</button>
+    </span>
+  </modal>
 </div>
 </template>
 
@@ -161,6 +189,7 @@
 /* eslint-disable */
 import {mapGetters} from 'vuex'
 import Constant from '../../../constant'
+import Modal from '../../Common/Modal'
 import backendAPI from '../../../api/backendAPI'
 import VideoPlayer from '../../Common/VideoPlayer'
 import webvtt from 'node-webvtt';
@@ -168,6 +197,7 @@ import webvtt from 'node-webvtt';
 export default {
   name: 'Content',
   components: {
+    Modal,
     VideoPlayer
   },
   data() {
@@ -179,8 +209,7 @@ export default {
       selectedBaseModel: 'ko-KR_BroadbandModel',
       createModel: false,
       deleteModel: false,
-      progressWidth: window.innerWidth/3,
-      // selectModel: '49668e87-a75e-4413-b2c0-ea10308108c9',
+      exportType: '',
       videoOptions: {
 				autoplay: false,
         controls: true,
@@ -194,7 +223,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters (['getRecognizeResult', 'getSubtitles', 'getVideoPlayer', 'getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel', 'getFileName', 'getSubtitles', 'getProgressBar', 'getSelectedModelName', 'getSelectedModelStatus']),
+    ...mapGetters (['getRecognizeResult', 'getSubtitles', 'getVideoPlayer', 'getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel', 'getFileName', 'getProgressBar', 'getSelectedModelName', 'getSelectedModelStatus']),
   },
   methods: {
     toggleSidebar: function (event) {
@@ -208,12 +237,11 @@ export default {
       let params = {
         username: this.getCredential.username,
         password: this.getCredential.password,
-        // customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id,
       }
       if (this.getSelectedModelName !== '') {
         params.customization_id = this.getCustomIdBySelectedModel(this.getSelectedModelName).customization_id
       }
-      // console.log(this.getSelectedModelName, ', ',this.getCustomIdBySelectedModel(this.getSelectedModelName))
+
       const formdata = new FormData();
       const targetFile = event.target.files[0];
       formdata.append('videofile', targetFile);
@@ -227,25 +255,74 @@ export default {
         .then(function(response) {
           this.initSubtitle(response.videoUrl)
         }.bind(this))
-      this.$store.commit(Constant.SET_FILENAME, targetFile.name.split('.').slice(0,-1) + '.xml');
+      // this.$store.commit(Constant.SET_FILENAME, targetFile.name.split('.').slice(0,-1) + '.xml');
+      this.$store.commit(Constant.SET_FILENAME, targetFile.name.split('.').slice(0,-1) + '');
     },
     exportXml: function () {
-      let params = {
+      this.exportType = 'xml';
+      // this.$store.commit(Constant.SET_MODAL_MESSAGE, this.exportType + ' 타입으로 Export 하시겠습니까?');
+      this.$store.commit(Constant.SET_MODAL_IS_SHOWING, true);
+      // if(exportType !== '') {
+      //   let params = {
+      //     username: this.getCredential.username,
+      //     password: this.getCredential.password,
+      //     subtitles: this.getSubtitles,
+      //   }
+      //   if(this.getSelectedModelName !== '') {
+      //     params.customization_id = this.getCustomIdBySelectedModel(this.getSelectedModelName).customization_id
+      //   }
+      //   if (this.getState.login && this.getState.videofile) {
+      //     this.$store.dispatch(Constant.EXPORT_XML, params);
+      //   }
+      // }
+    },
+    exportText: function () {
+      this.exportType = 'text';
+      // this.$store.commit(Constant.SET_MODAL_MESSAGE, this.exportType + ' 타입으로 Export 하시겠습니까?');
+      this.$store.commit(Constant.SET_MODAL_IS_SHOWING, true);
+      // if(exportType !== '') {
+      //   let params = {
+      //   username: this.getCredential.username,
+      //   password: this.getCredential.password,
+      //   subtitles: this.getSubtitles,
+      //   }
+      //   if(this.getSelectedModelName !== '') {
+      //     params.customization_id = this.getCustomIdBySelectedModel(this.getSelectedModelName).customization_id
+      //   }
+      //   if (this.getState.login && this.getState.videofile) {
+      //     this.$store.dispatch(Constant.EXPORT_TEXT, params);
+      //   }
+      // }
+    },
+    clikedExportBtn: function() {
+      this.$store.commit(Constant.SET_MODAL_MESSAGE, '')
+      this.$store.commit(Constant.SET_MODAL_IS_SHOWING, false);
+      if(this.exportType !== '') {
+        let params = {
         username: this.getCredential.username,
         password: this.getCredential.password,
         subtitles: this.getSubtitles,
+        }
+        if(this.getSelectedModelName !== '') {
+          params.customization_id = this.getCustomIdBySelectedModel(this.getSelectedModelName).customization_id
+        }
+        if ((this.getState.login && this.getState.videofile)) {
+          switch(this.exportType) {
+            case 'text':
+              this.$store.dispatch(Constant.EXPORT_TEXT, params);
+              break;
+            case 'xml':
+              this.$store.dispatch(Constant.EXPORT_XML, params);
+              break;
+            default: break;
+          }
+        }
       }
-      if(this.getSelectedModelName !== '') {
-        params.customization_id = this.getCustomIdBySelectedModel(this.getSelectedModelName).customization_id
-      }
-      if (this.getState.login && this.getState.videofile) {
-        this.$store.dispatch(Constant.EXPORT_XML, params);
-      }
+      this.exportType = '';
     },
     modalOff: function() {
-      this.createModel = false;
-      this.deleteModel = false;
-      this.clearInputTxt();
+      this.exportType = '';
+      this.$store.commit(Constant.SET_MODAL_IS_SHOWING, false);
     },
     focusOn: function (e) {
       e.target.parentElement.parentElement.parentElement.style.backgroundColor="#dee2e6"

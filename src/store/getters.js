@@ -63,4 +63,10 @@ export default {
   getSelectedModelName(state) {
     return state.state.selectedModelName;
   },
+  getModalMessage(state) {
+    return state.modal.message;
+  },
+  getModalIsShowing(state) {
+    return state.modal.isShowing;
+  },
 };

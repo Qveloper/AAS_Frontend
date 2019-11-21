@@ -12,7 +12,7 @@
         </div>
         <!-- <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
         <select class="custom-select" v-model="selectedModel" ref="selectModel" style="width: 120%;">
-          <option value="" selected disabled hidden>Baseline Model (Default)</option>
+          <option value="" selected="selected" disabled hidden>Baseline Model (Default)</option>
           <option v-for="customModel in getCustomModels" v-bind:value="customModel.name" v-bind:key="customModel.customization_id">{{customModel.name}}</option>
         </select>
         <a href="#" class="btn btn-bold btn-danger btn-upper" style="margin-left: 10px;" v-on:click="clickCreateBtn">
@@ -24,7 +24,7 @@
       </div>
     </div>
     <!-- end: Header Menu -->
-    <modal v-show="createModel" :myWidth="'25%'" :myHeight="'60%'">
+    <modal :isShowing="createModel" :myWidth="'25%'" :myHeight="'60%'">
         <div slot="header">
           <h3>Create Custom Model</h3>
         </div>
@@ -58,7 +58,7 @@
         </span>
       </modal>
 
-      <modal v-show="deleteModel" :myWidth="'30%'" :myHeight="'40%'">
+      <modal :isShowing="deleteModel" :myWidth="'30%'" :myHeight="'40%'">
         <div slot="header">
           <h3>Delete Custom Model</h3>
         </div>
@@ -85,7 +85,7 @@ import {mapGetters} from 'vuex'
 export default {
   name: 'Header',
   computed: {
-    ...mapGetters (['getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel', 'getProgressBar', 'getSelectedModelName', 'getSelectedModelStatus']),
+    ...mapGetters (['getCredential', 'getCustomModels', 'getState', 'getCustomIdBySelectedModel', 'getProgressBar', 'getSelectedModelName']),
   },
   data() {
     return {
@@ -98,9 +98,6 @@ export default {
     }
   },
   watch: {
-    getCredential: () => {
-      this.uploadVideoButton();
-    },
     name(newVal) {
       this.name = newVal;
     },
@@ -171,36 +168,6 @@ export default {
       this.name = '';
       this.description = '';
       this.selectedBaseModel = 'ko-KR_BroadbandModel'
-    },
-    getProgressSize: function () {
-      return window.innerWidth/4;
-    },
-    progressbar: function() {
-      var options = {
-        text: {
-          color: '#FFFFFF',
-          shadowEnable: true,
-          shadowColor: '#000000',
-          fontSize: 14,
-          fontFamily: 'Helvetica',
-          dynamicPosition: false,
-          hideText: false
-        },
-        progress: {
-          color: '#2dbd2d',
-          backgroundColor: '#C0C0C0'
-        },
-        layout: {
-          height: 35,
-          width: 140,
-          verticalTextAlign: 61,
-          horizontalTextAlign: 43,
-          zeroOffset: 0,
-          strokeWidth: 30,
-          progressPadding: 0,
-          type: 'line'
-        }
-      }
     },
   }
 };

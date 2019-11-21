@@ -61,9 +61,10 @@
         <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="20px,10px">
           <div class="kt-widget-15__author" style="font-style:italic; font-size: 15px; color: white; text-align: right;">
             <div class="kt-widget-15__detail">
-              <a class="kt-widget-15__name">Welcome,</a>
+              <a class="kt-widget-15__name" style="">The more you use,</a>
               <div class="kt-widget-15__desc">
-                Su-yeon!
+                the smarter AAS!
+                <!-- <button type="button" class="btn btn-dange btn-elevate-hover btn-pill" style="color:white;"><i class="la la-user"></i>Logout</button> -->
               </div>
             </div>
           </div>
@@ -146,9 +147,6 @@ export default {
     }
   },
   watch: {
-    getCredential: () => {
-      this.uploadVideoButton();
-    },
     name(newVal) {
       this.name = newVal;
     },
@@ -177,25 +175,6 @@ export default {
       }
       this.$store.dispatch(Constant.FETCH_CUSTOM_MODELS, params);
     },
-    uploadVideo: function (event) {
-      let params = {
-        username: this.getCredential.username,
-        password: this.getCredential.password,
-        customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id
-      }
-
-      const formdata = new FormData();
-      const targetFile = event.target.files[0];
-      formdata.append('videofile', targetFile);
-
-      let payload = {
-        params: params,
-        formdata: formdata
-      };
-
-      this.$store.dispatch(Constant.RECOGNIZE_VIDEO, payload);
-      this.$store.commit(Constant.SET_FILENAME, targetFile.name.split('.').slice(0,-1) + '.xml');
-    },
     createCustomModel: function (event) {
       let params = {
         username: this.getCredential.username,
@@ -223,25 +202,6 @@ export default {
       }
       this.$store.dispatch(Constant.FETCH_CUSTOM_MODELS, params);
     },
-    exportXml: function () {
-      if (this.getState.login && this.getState.videofile) {
-        this.$store.dispatch(Constant.EXPORT_XML, { 
-          username: this.getCredential.username,
-          password: this.getCredential.password,
-          subtitles: this.getSubtitles,
-          customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id
-        });
-      }
-    },
-    trainModel: function (event) {
-      if (this.getState.login && this.getState.videofile) {
-        this.$store.dispatch(Constant.TRAIN_MODEL, { 
-          username: this.getCredential.username,
-          password: this.getCredential.password,
-          customization_id: this.getCustomIdBySelectedModel(this.$refs.selectModel.value).customization_id
-        });
-      }
-    },
     clickCreateBtn: function() {
       this.createModel = true;
     },
@@ -257,36 +217,6 @@ export default {
       this.name = '';
       this.description = '';
       this.selectedBaseModel = 'ko-KR_BroadbandModel'
-    },
-    getProgressSize: function () {
-      return window.innerWidth/4;
-    },
-    progressbar: function() {
-      var options = {
-        text: {
-          color: '#FFFFFF',
-          shadowEnable: true,
-          shadowColor: '#000000',
-          fontSize: 14,
-          fontFamily: 'Helvetica',
-          dynamicPosition: false,
-          hideText: false
-        },
-        progress: {
-          color: '#2dbd2d',
-          backgroundColor: '#C0C0C0'
-        },
-        layout: {
-          height: 35,
-          width: 140,
-          verticalTextAlign: 61,
-          horizontalTextAlign: 43,
-          zeroOffset: 0,
-          strokeWidth: 30,
-          progressPadding: 0,
-          type: 'line'
-        }
-      }
     },
   }
 };

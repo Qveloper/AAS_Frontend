@@ -13,7 +13,6 @@ export default {
   state: {
     login: false,
     videofile: false,
-    selectedModelStatus: 'training',
     selectedModelName: '',
   },
   fileName: '',
@@ -29,4 +28,8 @@ export default {
     },
   },
   progressbar: false,
+  modal: {
+    message: '',
+    isShowing: false,
+  },
 };
