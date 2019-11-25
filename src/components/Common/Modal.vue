@@ -5,7 +5,7 @@
       <div class="modal-mask">
         <div class="modal-wrapper">
             <!-- <div class="modal-container"> -->
-            <div class="modal-container" :style="{ width: myWidth, 'max-height': myHeight + ' !important' }">
+            <div class="modal-container" :style="{ width: 'fit-content', height: 'fit-content'}">
 
                 <div class="modal-header">
                     <slot name="header">
@@ -84,12 +84,17 @@ export default {
 }
 
 .modal-wrapper {
-  display: table-cell;
-  vertical-align: middle;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-container {
-  width: 50%;
+  display: flex;
+  flex-direction: column;
+  width: auto;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;

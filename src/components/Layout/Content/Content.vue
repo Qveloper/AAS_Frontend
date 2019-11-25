@@ -24,33 +24,33 @@
                         &nbsp;Edit Tools&nbsp;&nbsp;
                       </span>
                     <div class="kt-inbox__panel">
-                      <button class="kt-inbox__icon" data-toggle="kt-tooltip" title="Undo" data-original-title="Undo (All)">
+                      <button class="kt-inbox__icon" data-toggle="kt-tooltip" title="Undo" data-original-title="Undo (All)" :disabled="!getState.videofile">
                           <i class="fa fa-undo-alt" v-bind:class="{'button-on': getRecognizeResult.length > 0, 'button-off': getRecognizeResult.length <= 0}"></i>
                           <!-- <i class="flaticon2-rubbish-bin"></i> -->
                         </button>
-                        <button class="kt-inbox__icon" data-toggle="kt-tooltip" title="Play Video" data-original-title="Play Video">
+                        <button class="kt-inbox__icon" data-toggle="kt-tooltip" title="Play Video" data-original-title="Play Video" :disabled="!getState.videofile">
                             <i class="fa fa-play-circle" v-bind:class="{'button-on': getRecognizeResult.length > 0, 'button-off': getRecognizeResult.length <= 0}"></i>
                         </button>
                         <button class="kt-inbox__icon" data-toggle="kt-tooltip" title="Upload Video" data-original-title="Upload Video">
                           <label for="video_file" style="margin-bottom:0; line-height:1;"><i class="fa fa-video" ref="uploadVideoButton" v-bind:class="{'button-on': getState.login, 'button-off': !getState.login}"></i></label>
-                          <input type="file" id="video_file" style="display:none;" v-bind:disabled="!getState.login" v-on:change="uploadVideo($event)">
+                          <input type="file" accept="video/*" id="video_file" style="display:none;" v-bind:disabled="!getState.login" v-on:change="uploadVideo($event)">
                         </button>
                         <!-- <button class="kt-inbox__icon" data-toggle="kt-tooltip" title="" data-original-title="Move">
                             <i class="flaticon2-expand"></i>
                         </button> -->
                         <div class="btn-group show" data-toggle="kt-tooltip" title="Export" data-original-title="Export Subtitles">
-                            <button type="button" class="kt-inbox__icon kt-inbox__icon--light" data-toggle="dropdown" aria-expanded="true">
+                            <button type="button" class="kt-inbox__icon kt-inbox__icon--light" data-toggle="dropdown" aria-expanded="true" :disabled="!getState.videofile">
                                 <i class="flaticon2-download" v-bind:class="{'button-on': getState.videofile, 'button-off': !getState.videofile}"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-left dropdown-menu-fit dropdown-menu-xs" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 30px, 0px);">
                                 <ul class="kt-nav">
                                     <li class="kt-nav__item" value="text">
-                                        <div class="kt-nav__link" v-on:click="exportText" :disabled="!getState.videofile">
+                                        <div class="kt-nav__link" v-on:click="exportFile('text')" :disabled="!getState.videofile">
                                             <span class="kt-nav__link-text">Text</span>
                                         </div>
                                     </li>
                                     <li class="kt-nav__item" value="xml">
-                                        <div class="kt-nav__link" v-on:click="exportXml" :disabled="!getState.videofile">
+                                        <div class="kt-nav__link" v-on:click="exportFile('xml')" :disabled="!getState.videofile">
                                             <span class="kt-nav__link-text">XML</span>
                                         </div>
                                     </li>
@@ -255,45 +255,20 @@ export default {
         .then(function(response) {
           this.initSubtitle(response.videoUrl)
         }.bind(this))
-      // this.$store.commit(Constant.SET_FILENAME, targetFile.name.split('.').slice(0,-1) + '.xml');
       this.$store.commit(Constant.SET_FILENAME, targetFile.name.split('.').slice(0,-1) + '');
     },
-    exportXml: function () {
-      this.exportType = 'xml';
-      // this.$store.commit(Constant.SET_MODAL_MESSAGE, this.exportType + ' 타입으로 Export 하시겠습니까?');
+    exportFile(exportFormat) {
+      this.exportType = exportFormat;
       this.$store.commit(Constant.SET_MODAL_IS_SHOWING, true);
-      // if(exportType !== '') {
-      //   let params = {
-      //     username: this.getCredential.username,
-      //     password: this.getCredential.password,
-      //     subtitles: this.getSubtitles,
-      //   }
-      //   if(this.getSelectedModelName !== '') {
-      //     params.customization_id = this.getCustomIdBySelectedModel(this.getSelectedModelName).customization_id
-      //   }
-      //   if (this.getState.login && this.getState.videofile) {
-      //     this.$store.dispatch(Constant.EXPORT_XML, params);
-      //   }
-      // }
     },
-    exportText: function () {
-      this.exportType = 'text';
-      // this.$store.commit(Constant.SET_MODAL_MESSAGE, this.exportType + ' 타입으로 Export 하시겠습니까?');
-      this.$store.commit(Constant.SET_MODAL_IS_SHOWING, true);
-      // if(exportType !== '') {
-      //   let params = {
-      //   username: this.getCredential.username,
-      //   password: this.getCredential.password,
-      //   subtitles: this.getSubtitles,
-      //   }
-      //   if(this.getSelectedModelName !== '') {
-      //     params.customization_id = this.getCustomIdBySelectedModel(this.getSelectedModelName).customization_id
-      //   }
-      //   if (this.getState.login && this.getState.videofile) {
-      //     this.$store.dispatch(Constant.EXPORT_TEXT, params);
-      //   }
-      // }
-    },
+    // exportXml: function () {
+    //   this.exportType = 'xml';
+    //   this.$store.commit(Constant.SET_MODAL_IS_SHOWING, true);
+    // },
+    // exportText: function () {
+    //   this.exportType = 'text';
+    //   this.$store.commit(Constant.SET_MODAL_IS_SHOWING, true);
+    // },
     clikedExportBtn: function() {
       this.$store.commit(Constant.SET_MODAL_MESSAGE, '')
       this.$store.commit(Constant.SET_MODAL_IS_SHOWING, false);
@@ -439,8 +414,7 @@ export default {
       const uri = 'data:text/vtt;base64,' + btoa(unescape(encodeURIComponent(compile)))
 
       this.getVideoPlayer.videoPlayerObject.src({
-        src: 'http://' + window.location.hostname + ':3000/uploads/' + videoUrl,
-        type: "video/mp4"
+        src: 'http://' + window.location.hostname + ':3000/uploads/' + videoUrl, type: "video/mp4"
       })
       this.getVideoPlayer.videoPlayerObject.ready(function () {
         this.removeRemoteTextTrack(this.remoteTextTracks()[0])
