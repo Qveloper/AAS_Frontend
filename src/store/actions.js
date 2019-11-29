@@ -11,11 +11,18 @@ export default {
     backendAPI.getCustoms(payload)
       .then((response) => {
         // Custom 모델 없을 시 생성 메소드 호출
-        if (response.data.customizations.length === 0) {
-          this.createCustomModel(payload);
-          store.commit(Constant.SET_IS_LOADING, false);
-          return;
-        }
+        // if (response.data.customizations.length === 0) {
+        //   const createModelParam = {
+        //     username: payload.username,
+        //     password: payload.password,
+        //     name: 'My First Custom Model',
+        //     base_model_name: 'ko-KR_BroadbandModel',
+        //     description: 'First Custom Model',
+        //   };
+        //   backendAPI.createCustom(createModelParam);
+        //   store.commit(Constant.SET_IS_LOADING, false);
+        //   return;
+        // }
         store.commit(Constant.SET_STATE_LOGIN, true);
         store.commit(Constant.SET_IS_LOADING, false);
         store.commit(Constant.FETCH_CUSTOM_MODELS, response.data.customizations);

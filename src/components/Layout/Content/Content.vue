@@ -38,9 +38,9 @@
                         <!-- <button class="kt-inbox__icon" data-toggle="kt-tooltip" title="" data-original-title="Move">
                             <i class="flaticon2-expand"></i>
                         </button> -->
-                        <div class="btn-group show" data-toggle="kt-tooltip" title="Export" data-original-title="Export Subtitles">
+                        <div class="btn-group show">
                             <button type="button" class="kt-inbox__icon kt-inbox__icon--light" data-toggle="dropdown" aria-expanded="true" :disabled="!getState.videofile">
-                                <i class="flaticon2-download" v-bind:class="{'button-on': getState.videofile, 'button-off': !getState.videofile}"></i>
+                                <i class="flaticon2-download" v-bind:class="{'button-on': getState.videofile, 'button-off': !getState.videofile}" data-toggle="kt-tooltip" title="Export" data-original-title="Export Subtitles" :disabled="!getState.videofile"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-left dropdown-menu-fit dropdown-menu-xs" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 30px, 0px);">
                                 <ul class="kt-nav">
